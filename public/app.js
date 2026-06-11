@@ -1,5 +1,8 @@
 // 차트만 보고 매매하는 - 단타 적성검사 — 게임 엔진
 const $ = (s) => document.querySelector(s);
+const gaEvent = (name, params = {}) => {
+  if (typeof window.gtag === "function") window.gtag("event", name, params);
+};
 const N = 252;      // 게임 구간: 1년 = 252봉
 const PRE = 252;    // 사전 공개 구간: 직전 1년
 const START_ASSET = 10000000; // 가상자금 1,000만원
@@ -157,6 +160,7 @@ function togglePause() {
   if (!G.started) {
     G.started = true;
     G.paused = false;
+    gaEvent("game_start", { challenge_mode: G.challenge ? "challenge" : "standard" });
     $("#start-hint").classList.add("hidden");
     btn.textContent = "⏸ 정지";
     btn.className = "";
@@ -552,6 +556,13 @@ function endGame() {
   G.result = { equity, myRet, bhRet, alpha, mdd, grade, nTrades: G.trades.length,
     winRate: G.sellCount ? G.sellWins / G.sellCount : null };
 
+  gaEvent("game_complete", {
+    grade,
+    return_pct: Number((myRet * 100).toFixed(2)),
+    benchmark_return_pct: Number((bhRet * 100).toFixed(2)),
+    alpha_pct: Number((alpha * 100).toFixed(2)),
+    trade_count: G.trades.length,
+  });
   saveHistory();
   renderResult();
 }
@@ -725,6 +736,7 @@ async function shareChallenge() {
   try {
     await navigator.clipboard.writeText(text + "\n" + url);
     btn.innerHTML = COPIED;
+    gaEvent("challenge_copy", { grade: r.grade });
     return;
   } catch {}
   // 폴백: 링크 입력칸 노출 (클립보드 권한이 막힌 환경)
@@ -736,6 +748,7 @@ async function shareChallenge() {
   try {
     document.execCommand("copy");
     btn.innerHTML = COPIED;
+    gaEvent("challenge_copy", { grade: r.grade });
   } catch {
     challengeMsg("아래 링크를 복사해서 친구에게 보내세요 👇");
   }
@@ -852,6 +865,7 @@ function downloadCard() {
   a.href = CARD_URL;
   a.download = "단타적성검사.png";
   a.click();
+  gaEvent("card_save", { grade: G.result?.grade || "unknown" });
   cardModalMsg("이미지를 저장했어요! 💾");
 }
 
@@ -860,6 +874,7 @@ async function copyCard() {
   try {
     if (!navigator.clipboard || !window.ClipboardItem) throw new Error("unsupported");
     await navigator.clipboard.write([new ClipboardItem({ "image/png": CARD_BLOB })]);
+    gaEvent("card_copy", { grade: G.result?.grade || "unknown" });
     cardModalMsg("카드 이미지가 복사됐어요! 붙여넣기 하세요 📋");
   } catch {
     cardModalMsg("이 브라우저는 이미지 복사가 안 돼요. '이미지 저장'을 이용해 주세요 🙏");
