@@ -18,23 +18,24 @@ This repository deploys `public/` to GitHub Pages whenever `main` is updated.
 3. Run the **Deploy GitHub Pages** workflow or push to `main`.
 4. The default site URL is `https://rhymage.github.io/stockgame/`.
 
-## Custom domain: stockgame.rhymage.com
+## Shared custom domain
 
-At the DNS provider for `rhymage.com`, create this record:
+The user Pages repository `rhymage/rhymage.github.io` owns the shared custom
+domain `app.rhymage.com`. Project Pages repositories automatically become
+available under their repository-name path.
+
+- This app: `https://app.rhymage.com/stockgame/`
+- Future app pattern: `https://app.rhymage.com/<repository-name>/`
+
+The shared DNS record is:
 
 | Type | Name | Target |
 | --- | --- | --- |
-| CNAME | `stockgame` | `rhymage.github.io` |
+| CNAME | `app` | `rhymage.github.io` |
 
-Then:
-
-1. Open the repository's **Settings > Pages**.
-2. Enter `stockgame.rhymage.com` under **Custom domain** and save.
-3. Wait for the DNS check to pass.
-4. Enable **Enforce HTTPS** when the option becomes available.
-
-Do not use a wildcard DNS record for this setup. Keep the repository public
-while using GitHub Pages on the GitHub Free plan.
+Do not set a separate custom domain in each project repository. Keep project
+sites compatible with subpaths by using relative asset URLs or URLs prefixed
+with the repository path.
 
 ## Data refresh
 
@@ -48,4 +49,3 @@ git push
 ```
 
 Refreshing data can change stock indexes and invalidate existing challenge links.
-

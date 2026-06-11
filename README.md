@@ -54,8 +54,8 @@ Yahoo Finance의 최근 10년 일봉을 가져와 조정 종가 비율로 OHLC�
 `main` 브랜치에 푸시하면 GitHub Actions가 `public/` 폴더를 GitHub Pages에
 배포합니다.
 
-- 기본 URL: `https://rhymage.github.io/stockgame/`
-- 예정 커스텀 도메인: `https://stockgame.rhymage.com`
+- 운영 URL: `https://app.rhymage.com/stockgame/`
+- 기본 GitHub Pages URL: `https://rhymage.github.io/stockgame/`
 - 상세 안내: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 - AdSense 준비: [docs/ADSENSE.md](docs/ADSENSE.md)
 
@@ -75,4 +75,3 @@ Yahoo Finance의 최근 10년 일봉을 가져와 조정 종가 비율로 OHLC�
 
 Copyright (c) 2026 rhymage. All rights reserved.
 No license is granted for reuse, redistribution, or commercial use.
-
