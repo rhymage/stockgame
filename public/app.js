@@ -597,7 +597,7 @@ function renderResult() {
   show("scr-result");
   $("#challenge-msg").classList.add("hidden");
   $("#challenge-copy").classList.add("hidden");
-  $("#btn-challenge").textContent = "⚔️ 친구에게 도전장 보내기";
+  $("#btn-challenge").innerHTML = "⚔️ 친구에게 도전장 보내기";
 
   $("#r-name").textContent = `${SECTOR_EMOJI[s.sector] || "📈"} ${s.name} (${s.t})`;
   $("#r-period").textContent = `${fmtDate(s.d[G.start])} ~ ${fmtDate(s.d[bar(N - 1)])} 구간이었습니다`;
@@ -712,14 +712,14 @@ function challengeUrl() {
 
 async function shareChallenge() {
   const r = G.result;
-  const text = `📉 차트만 보고 매매하는 - 단타 적성검사 ${r.grade}등급! ${G.stock.name} 1년 단타로 ${pct(r.myRet)} (존버는 ${pct(r.bhRet)}). 같은 차트로 나를 이겨봐 ⚔️`;
+  const text = `📉 차트만 보고 매매하는 - 단타 적성검사 ${r.grade}등급! 1년 단타로 ${pct(r.myRet)} (존버는 ${pct(r.bhRet)}). 같은 차트로 나를 이겨봐 ⚔️`;
   const url = challengeUrl();
   const btn = $("#btn-challenge");
-  const COPIED = "✅ 복사됐어요! 붙여넣어 보내세요 (다시 누르면 재복사)";
+  const COPIED = '✅ 복사됐어요! 카톡창에 붙여넣어 보내세요.<small>다시 누르면 재복사</small>';
   // 클릭 즉시 도전장(메시지+링크) 복사 → 버튼 문구로 안내. 다시 눌러도 재복사됨
   try {
     await navigator.clipboard.writeText(text + "\n" + url);
-    btn.textContent = COPIED;
+    btn.innerHTML = COPIED;
     return;
   } catch {}
   // 폴백: 링크 입력칸 노출 (클립보드 권한이 막힌 환경)
@@ -730,7 +730,7 @@ async function shareChallenge() {
   inp.focus(); inp.select();
   try {
     document.execCommand("copy");
-    btn.textContent = COPIED;
+    btn.innerHTML = COPIED;
   } catch {
     challengeMsg("아래 링크를 복사해서 친구에게 보내세요 👇");
   }
