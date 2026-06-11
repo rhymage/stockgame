@@ -87,6 +87,12 @@ async function init() {
     startGame();
   };
   $("#btn-card").onclick = saveCard;
+  $("#btn-card-save").onclick = downloadCard;
+  $("#btn-card-copy").onclick = copyCard;
+  $("#btn-card-close").onclick = closeCardModal;
+  $("#card-modal").addEventListener("click", (e) => {
+    if (e.target === $("#card-modal")) closeCardModal(); // 배경 클릭 시 닫기
+  });
   $("#btn-challenge").onclick = shareChallenge;
   document.querySelectorAll(".speed button").forEach((b) => {
     b.onclick = () => {
@@ -685,24 +691,24 @@ async function shareChallenge() {
   const r = G.result;
   const text = `📉 단타 적성검사 ${r.grade}등급! ${G.stock.name} 1년 단타로 ${pct(r.myRet)} (존버는 ${pct(r.bhRet)}). 같은 차트로 나를 이겨봐 ⚔️`;
   const url = challengeUrl();
-  // 1순위: OS 공유 시트
-  if (navigator.share) {
-    try { await navigator.share({ title: "단타 적성검사", text, url }); return; }
-    catch (e) { if (e && e.name === "AbortError") return; /* 사용자가 닫음 */ }
-  }
-  // 2순위: 클립보드
+  // 클릭 즉시 도전장(메시지+링크) 클립보드 복사
   try {
     await navigator.clipboard.writeText(text + "\n" + url);
-    challengeMsg("도전장이 복사됐어요! 친구에게 붙여넣어 보내세요 📋");
+    challengeMsg("도전장이 복사됐어요! 카톡 등에 붙여넣어 친구에게 보내세요 ⚔️");
     return;
   } catch {}
-  // 3순위: URL 직접 노출 (클립보드 권한이 막힌 환경)
+  // 폴백: 링크 입력칸 노출 (클립보드 권한이 막힌 환경)
   const box = $("#challenge-copy");
   box.classList.remove("hidden");
   const inp = $("#challenge-url");
   inp.value = url;
   inp.focus(); inp.select();
-  challengeMsg("아래 링크를 복사해서 보내세요 👇");
+  try {
+    document.execCommand("copy");
+    challengeMsg("도전장 링크가 복사됐어요! 붙여넣어 보내세요 👇");
+  } catch {
+    challengeMsg("아래 링크를 복사해서 친구에게 보내세요 👇");
+  }
 }
 
 function wrapText(ctx, text, x, y, maxW, lh) {
@@ -786,14 +792,47 @@ async function saveCard() {
   ctx.fillText("너도 해봐 → 단타 적성검사", W / 2, 1430);
 
   const blob = await new Promise((res) => cv.toBlob(res, "image/png"));
-  const file = new File([blob], "단타적성검사.png", { type: "image/png" });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: "단타 적성검사" }); return; } catch {}
-  }
+  openCardModal(blob);
+}
+
+// ── 결과 카드 팝업 (시스템 창 대신 내부 팝업) ──
+let CARD_BLOB = null, CARD_URL = null;
+
+function cardModalMsg(text) {
+  $("#card-modal-msg").textContent = text || "";
+}
+
+function openCardModal(blob) {
+  CARD_BLOB = blob;
+  if (CARD_URL) URL.revokeObjectURL(CARD_URL);
+  CARD_URL = URL.createObjectURL(blob);
+  $("#card-preview").src = CARD_URL;
+  cardModalMsg("");
+  $("#card-modal").classList.remove("hidden");
+}
+
+function closeCardModal() {
+  $("#card-modal").classList.add("hidden");
+}
+
+function downloadCard() {
+  if (!CARD_BLOB) return;
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
+  a.href = CARD_URL;
   a.download = "단타적성검사.png";
   a.click();
+  cardModalMsg("이미지를 저장했어요! 💾");
+}
+
+async function copyCard() {
+  if (!CARD_BLOB) return;
+  try {
+    if (!navigator.clipboard || !window.ClipboardItem) throw new Error("unsupported");
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": CARD_BLOB })]);
+    cardModalMsg("카드 이미지가 복사됐어요! 붙여넣기 하세요 📋");
+  } catch {
+    cardModalMsg("이 브라우저는 이미지 복사가 안 돼요. '이미지 저장'을 이용해 주세요 🙏");
+  }
 }
 
 init().catch(() => {
