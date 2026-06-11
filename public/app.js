@@ -1,4 +1,4 @@
-// 차트만 보는 단타 적성검사 — 게임 엔진
+// 차트만 보고 매매하는 - 단타 적성검사 — 게임 엔진
 const $ = (s) => document.querySelector(s);
 const N = 252;      // 게임 구간: 1년 = 252봉
 const PRE = 252;    // 사전 공개 구간: 직전 1년
@@ -78,8 +78,13 @@ async function init() {
 
   renderDash();
   $("#btn-start").onclick = startGame;
-  $("#btn-restart").onclick = () => {
-    if (confirm("이 판을 버리고 다시 시작할까요?")) startGame();
+  $("#btn-restart").onclick = async () => {
+    // 진행 중이면 멈춰두고, 취소하면 재개
+    const wasRunning = G.phase === "playing" && !G.paused && G.timer;
+    if (wasRunning) { clearInterval(G.timer); G.timer = null; }
+    const ok = await askConfirm("이 판을 버리고 다시 시작할까요?", "다시 시작");
+    if (ok) { startGame(); return; }
+    if (wasRunning) { G.timer = setInterval(tick, 250 / G.speed); }
   };
   $("#btn-again").onclick = () => {
     G.challenge = null;
@@ -119,6 +124,24 @@ function challengeMsg(text) {
   const m = $("#challenge-msg");
   m.textContent = text;
   m.classList.remove("hidden");
+}
+
+// 내부 확인 팝업 (window.confirm 대체) → Promise<boolean>
+function askConfirm(msg, okLabel = "확인") {
+  return new Promise((resolve) => {
+    const modal = $("#confirm-modal"), ok = $("#confirm-ok"), cancel = $("#confirm-cancel");
+    $("#confirm-msg").textContent = msg;
+    ok.textContent = okLabel;
+    modal.classList.remove("hidden");
+    const done = (v) => {
+      modal.classList.add("hidden");
+      ok.onclick = cancel.onclick = modal.onclick = null;
+      resolve(v);
+    };
+    ok.onclick = () => done(true);
+    cancel.onclick = () => done(false);
+    modal.onclick = (e) => { if (e.target === modal) done(false); }; // 배경 클릭 = 취소
+  });
 }
 
 // 일시정지 중 하루씩 진행 (게임이 시작된 이후에만)
@@ -574,18 +597,18 @@ function renderResult() {
   show("scr-result");
   $("#challenge-msg").classList.add("hidden");
   $("#challenge-copy").classList.add("hidden");
+  $("#btn-challenge").textContent = "⚔️ 친구에게 도전장 보내기";
 
   $("#r-name").textContent = `${SECTOR_EMOJI[s.sector] || "📈"} ${s.name} (${s.t})`;
   $("#r-period").textContent = `${fmtDate(s.d[G.start])} ~ ${fmtDate(s.d[bar(N - 1)])} 구간이었습니다`;
   $("#r-grade").textContent = r.grade;
-  $("#r-comment").textContent = gradeComment(r) + " " + behaviorTag();
+  $("#r-comment").innerHTML = gradeComment(r) + '<br><span class="r-behavior">' + behaviorTag() + "</span>";
 
   const row = (label, ret, me) =>
     `<div class="row${me ? " me" : ""}"><span>${label}</span><b class="${ret >= 0 ? "plus" : "minus"}">${pct(ret)}</b></div>`;
   $("#r-vs").innerHTML =
     row(`🫵 나의 단타 (최종 ${fmtWon(r.equity)})`, r.myRet, true) +
-    row(`💎 그냥 존버했다면 (바이앤홀드)`, r.bhRet) +
-    row(`💵 아무것도 안 했다면`, 0);
+    row(`💎 그냥 존버했다면 (바이앤홀드)`, r.bhRet);
 
   $("#r-stats").innerHTML = `
     <div class="stat"><span>매매 횟수</span><b>${r.nTrades}회</b></div>
@@ -689,12 +712,14 @@ function challengeUrl() {
 
 async function shareChallenge() {
   const r = G.result;
-  const text = `📉 차트만 보는 - 단타 적성검사 ${r.grade}등급! ${G.stock.name} 1년 단타로 ${pct(r.myRet)} (존버는 ${pct(r.bhRet)}). 같은 차트로 나를 이겨봐 ⚔️`;
+  const text = `📉 차트만 보고 매매하는 - 단타 적성검사 ${r.grade}등급! ${G.stock.name} 1년 단타로 ${pct(r.myRet)} (존버는 ${pct(r.bhRet)}). 같은 차트로 나를 이겨봐 ⚔️`;
   const url = challengeUrl();
-  // 클릭 즉시 도전장(메시지+링크) 클립보드 복사
+  const btn = $("#btn-challenge");
+  const COPIED = "✅ 복사됐어요! 붙여넣어 보내세요 (다시 누르면 재복사)";
+  // 클릭 즉시 도전장(메시지+링크) 복사 → 버튼 문구로 안내. 다시 눌러도 재복사됨
   try {
     await navigator.clipboard.writeText(text + "\n" + url);
-    challengeMsg("도전장이 복사됐어요! 카톡 등에 붙여넣어 친구에게 보내세요 ⚔️");
+    btn.textContent = COPIED;
     return;
   } catch {}
   // 폴백: 링크 입력칸 노출 (클립보드 권한이 막힌 환경)
@@ -705,7 +730,7 @@ async function shareChallenge() {
   inp.focus(); inp.select();
   try {
     document.execCommand("copy");
-    challengeMsg("도전장 링크가 복사됐어요! 붙여넣어 보내세요 👇");
+    btn.textContent = COPIED;
   } catch {
     challengeMsg("아래 링크를 복사해서 친구에게 보내세요 👇");
   }
@@ -743,8 +768,8 @@ async function saveCard() {
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#ffd84d"; ctx.font = "700 40px Pretendard, sans-serif";
-  ctx.fillText("📉 차트만 보는 - 단타 적성검사", W / 2, 92);
+  ctx.fillStyle = "#ffd84d"; ctx.font = "700 36px Pretendard, sans-serif";
+  ctx.fillText("📉 차트만 보고 매매하는 - 단타 적성검사", W / 2, 90);
 
   // 등급 배지
   ctx.strokeStyle = "#ffd84d"; ctx.lineWidth = 6;
@@ -789,7 +814,7 @@ async function saveCard() {
   }
 
   ctx.fillStyle = "#4a5278"; ctx.font = "400 26px Pretendard, sans-serif";
-  ctx.fillText("너도 해봐 → 차트만 보는 - 단타 적성검사", W / 2, 1430);
+  ctx.fillText("너도 해봐 → 차트만 보고 매매하는 - 단타 적성검사", W / 2, 1430);
 
   const blob = await new Promise((res) => cv.toBlob(res, "image/png"));
   openCardModal(blob);

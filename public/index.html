@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>차트만 보는 - 단타 적성검사 · 너 단타 해도 되는 사람이야?</title>
+<title>차트만 보고 매매하는 - 단타 적성검사 · 너 단타 해도 되는 사람이야?</title>
 <meta name="description" content="종목명을 숨긴 실제 미국주식 차트로 1년치 단타를 쳐보고 적성 등급을 받아보세요. 마지막에 종목이 공개됩니다.">
-<meta property="og:title" content="📉 차트만 보는 - 단타 적성검사">
+<meta property="og:title" content="📉 차트만 보고 매매하는 - 단타 적성검사">
 <meta property="og:description" content="실제 차트, 가상 자금. 당신의 단타 적성은 몇 등급? (종목은 비밀)">
 <meta property="og:type" content="website">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1057421991223781" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 <div class="wrap">
@@ -19,7 +19,7 @@
   <!-- 인트로 -->
   <section id="scr-intro" class="screen">
     <header>
-      <h1><span class="h1-sub">차트만 보는</span><span class="h1-main">📉 단타 적성검사</span></h1>
+      <h1><span class="h1-sub">차트만 보고 매매하는</span><span class="h1-main">📉 단타 적성검사</span></h1>
       <p class="tagline">실제 차트, 가상자금 1,000만원. 당신의 단타 적성은?</p>
     </header>
     <div id="challenge-banner" class="challenge-banner hidden"></div>
@@ -123,7 +123,7 @@
 <div class="card-modal hidden" id="card-modal">
   <div class="card-modal-inner">
     <p class="card-modal-title">📸 결과 카드</p>
-    <img id="card-preview" alt="차트만 보는 - 단타 적성검사 결과 카드">
+    <img id="card-preview" alt="차트만 보고 매매하는 - 단타 적성검사 결과 카드">
     <div class="card-modal-actions">
       <button id="btn-card-save">💾 이미지 저장</button>
       <button id="btn-card-copy">📋 복사</button>
@@ -133,6 +133,17 @@
   </div>
 </div>
 
-<script src="app.js?v=12"></script>
+<!-- 확인 팝업 (다시시작 등) -->
+<div class="confirm-modal hidden" id="confirm-modal">
+  <div class="confirm-inner">
+    <p class="confirm-msg" id="confirm-msg"></p>
+    <div class="confirm-actions">
+      <button id="confirm-cancel">취소</button>
+      <button id="confirm-ok">다시 시작</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js?v=13"></script>
 </body>
 </html>

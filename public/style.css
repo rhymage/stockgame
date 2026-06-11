@@ -195,6 +195,7 @@ h1 { font-size: 30px; letter-spacing: -0.5px; line-height: 1.18; }
 .grade { font-size: 64px; font-weight: 900; color: var(--accent); line-height: 1; }
 .grade-label { font-size: 12px; color: var(--sub); margin-top: 4px; }
 .r-comment { margin-top: 12px; color: var(--accent); font-size: 15px; }
+.r-comment .r-behavior { display: inline-block; margin-top: 5px; font-size: 13.5px; color: var(--sub); }
 
 .vs-rows { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
 .vs-rows .row {
@@ -280,5 +281,25 @@ footer p { margin-top: 4px; }
   margin-top: 6px; background: none; border: none; color: var(--sub);
   font-family: inherit; font-size: 14px; cursor: pointer; padding: 6px 12px;
 }
+
+/* ── 확인 팝업 ── */
+.confirm-modal {
+  position: fixed; inset: 0; z-index: 110;
+  background: rgba(4, 6, 14, .82); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.confirm-inner {
+  background: var(--panel); border: 1px solid #2a3158; border-radius: 16px;
+  padding: 22px 18px 16px; width: 100%; max-width: 340px; text-align: center;
+}
+.confirm-msg { font-size: 16px; color: var(--text); font-weight: 600; margin-bottom: 18px; line-height: 1.5; }
+.confirm-actions { display: flex; gap: 8px; }
+.confirm-actions button {
+  flex: 1; padding: 13px 4px; border: none; border-radius: 12px;
+  font-family: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
+}
+#confirm-cancel { background: var(--panel2); color: var(--text); border: 1px solid #4a5278; }
+#confirm-ok { background: var(--accent); color: #221700; }
+.confirm-actions button:active { transform: scale(.97); }
 .footer-links { display: flex; justify-content: center; gap: 14px; margin-top: 10px; }
 .footer-links a { color: #8b93b8; }
