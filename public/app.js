@@ -545,7 +545,8 @@ function endGame() {
 
   const grade =
     G.trades.length === 0 ? "?" :
-    alpha >= 0.20 ? "S" : alpha >= 0.10 ? "A" : alpha >= 0.03 ? "B" :
+    alpha >= 0.50 ? "SSS" : alpha >= 0.35 ? "SS" : alpha >= 0.20 ? "S" :
+    alpha >= 0.10 ? "A" : alpha >= 0.03 ? "B" :
     alpha > -0.03 ? "C" : alpha > -0.15 ? "D" : "F";
 
   G.result = { equity, myRet, bhRet, alpha, mdd, grade, nTrades: G.trades.length,
@@ -557,6 +558,10 @@ function endGame() {
 
 // [기본 멘트, 내 수익률이 마이너스일 때 멘트]
 const GRADE_COMMENT = {
+  SSS: ["존버 수익률을 50%p 넘게 압도했습니다. 전설적인 한 판입니다. 🏆",
+        "폭락장을 완벽하게 피했습니다. 시장에서 순간이동하셨나요? 🛸"],
+  SS: ["존버를 크게 앞질렀습니다. 차트가 당신에게 말을 거는 수준입니다. 🔥",
+       "폭락장에서 놀라운 방어력을 보여줬습니다. 생존을 넘어 압승입니다. 🛡️"],
   S: ["당신... 혹시 여의도에서 오셨나요? 시장을 압살했습니다. 👑",
       "폭락장에서 이 정도 방어라니. 도망치는 것도 실력입니다. 🏃"],
   A: ["단타 적성 확실합니다. 실전엔 수수료가 있다는 것만 기억하세요. 😎",
@@ -690,7 +695,7 @@ function renderDash() {
   dash.classList.remove("hidden");
   const beats = h.filter((x) => x.ret > x.bh).length;
   const avgAlpha = h.reduce((a, x) => a + (x.ret - x.bh), 0) / h.length;
-  const order = ["S", "A", "B", "C", "D", "F"];
+  const order = ["SSS", "SS", "S", "A", "B", "C", "D", "F"];
   const best = order.find((g) => h.some((x) => x.grade === g)) || "-";
   dash.innerHTML = `
     <h3>📊 내 단타 기록</h3>
@@ -774,7 +779,8 @@ async function saveCard() {
   // 등급 배지
   ctx.strokeStyle = "#ffd84d"; ctx.lineWidth = 6;
   ctx.beginPath(); ctx.arc(W / 2, 250, 118, 0, Math.PI * 2); ctx.stroke();
-  ctx.fillStyle = "#ffd84d"; ctx.font = "900 150px Pretendard, sans-serif";
+  const gradeFontSize = r.grade.length === 3 ? 105 : r.grade.length === 2 ? 130 : 150;
+  ctx.fillStyle = "#ffd84d"; ctx.font = `900 ${gradeFontSize}px Pretendard, sans-serif`;
   ctx.fillText(r.grade, W / 2, 303);
 
   // 종목 공개
