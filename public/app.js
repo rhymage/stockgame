@@ -78,7 +78,6 @@ async function init() {
 
   renderDash();
   $("#btn-start").onclick = startGame;
-  $("#btn-begin").onclick = beginPlay;
   $("#btn-restart").onclick = () => {
     if (confirm("이 판을 버리고 다시 시작할까요?")) startGame();
   };
@@ -116,15 +115,26 @@ function challengeMsg(text) {
   m.classList.remove("hidden");
 }
 
-// 일시정지 중 하루씩 진행
+// 일시정지 중 하루씩 진행 (게임이 시작된 이후에만)
 function stepDay() {
-  if (G.phase !== "playing" || !G.paused) return;
+  if (G.phase !== "playing" || !G.paused || !G.started) return;
   tick();
 }
 
 function togglePause() {
   if (G.phase !== "playing") return;
   const btn = $("#btn-pause");
+  // 최초 재생 = 1년 단타 시작
+  if (!G.started) {
+    G.started = true;
+    G.paused = false;
+    $("#start-hint").classList.add("hidden");
+    btn.textContent = "⏸ 정지";
+    btn.className = "";
+    $("#btn-step").disabled = true;
+    G.timer = setInterval(tick, 250 / G.speed);
+    return;
+  }
   if (G.paused) {
     G.paused = false;
     btn.textContent = "⏸ 정지";
@@ -158,7 +168,7 @@ async function startGame() {
   }
 
   Object.assign(G, {
-    stock, stockIdx: idx, start, phase: "preview", paused: false,
+    stock, stockIdx: idx, start, phase: "preview", paused: false, started: false,
     day: 0, cash: START_ASSET, shares: 0, avgCost: 0,
     pending: [], trades: [], equityCurve: [START_ASSET],
     sellWins: 0, sellCount: 0, holdDays: 0, result: null,
@@ -166,12 +176,15 @@ async function startGame() {
 
   $("#g-sector").textContent = `${SECTOR_EMOJI[stock.sector] || "📈"} ${stock.sector} 섹터`;
   $("#g-day").textContent = "지난 1년";
-  $("#begin-bar").classList.remove("hidden");
-  $("#play-ui").classList.add("hidden");
+  // 미리보기 단계에서도 본게임 UI를 그대로 노출 (버튼은 사전 차트 그리는 동안만 잠금)
+  $("#play-ui").classList.remove("hidden");
+  $("#start-hint").classList.remove("hidden");
   const pBtn = $("#btn-pause");
-  pBtn.textContent = "⏸ 정지";
-  pBtn.classList.remove("paused");
+  pBtn.textContent = "⏳ 차트 그리는 중";
+  pBtn.className = "start";
+  pBtn.disabled = true;
   $("#btn-step").disabled = true;
+  ["#btn-buy-part", "#btn-buy-full", "#btn-sell-part", "#btn-sell-full"].forEach((s) => ($(s).disabled = true));
   show("scr-game");
 
   // 직전 1년 차트 빠른 스윕 (약 1초)
@@ -181,23 +194,23 @@ async function startGame() {
     drawPreviewChart(k);
     if (k >= PRE) {
       clearInterval(G.previewTimer); G.previewTimer = null;
-      G.phase = "ready";
+      enterReady();
     }
   }, 30);
 }
 
-// ── 플레이 개시 ──
-function beginPlay() {
-  if (G.phase !== "ready" && G.phase !== "preview") return;
-  clearInterval(G.previewTimer); G.previewTimer = null;
-  G.phase = "playing";
-  G.paused = false;
-  $("#begin-bar").classList.add("hidden");
-  $("#play-ui").classList.remove("hidden");
-  updateHud();
-  drawGameChart();
-  clearInterval(G.timer);
-  G.timer = setInterval(tick, 250 / G.speed);
+// ── 사전 차트 완성 → 매매 가능한 일시정지 상태로 대기 ──
+function enterReady() {
+  G.phase = "playing"; // 매매 허용 (단, 시계는 멈춰 있음)
+  G.paused = true;
+  G.started = false;
+  const pBtn = $("#btn-pause");
+  pBtn.textContent = "▶ 1년 단타 시작";
+  pBtn.className = "start";
+  pBtn.disabled = false;
+  $("#btn-step").disabled = true;
+  drawGameChart(); // 첫 봉(Day 1) 공개
+  updateHud();     // 매수 버튼 활성화
 }
 
 // ── 주문 (분할 = 총자산의 1/4, 풀 = 전부 / 다음 봉 시가 체결) ──
@@ -587,38 +600,45 @@ function renderResult() {
   drawResultChart();
 }
 
-function drawResultChart() {
-  const cv = $("#r-chart"), ctx = cv.getContext("2d");
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0, 0, W, H);
+// 결과 곡선(주가 vs 내 자산) — 화면/카드 공용.
+// 주가뿐 아니라 자산 곡선까지 포함해 Y축 스케일을 잡아 그래프가 잘리지 않게 한다.
+function paintResultCurves(ctx, ox, oy, w, h, big = false) {
   const s = G.stock;
   const closes = [];
   for (let d = 0; d < N; d++) closes.push(s.c[bar(d)]);
-  const lo = Math.min(...closes), hi = Math.max(...closes);
-  const pad = 14;
-  const x = (d) => pad + (d / (N - 1)) * (W - pad * 2);
-  const y = (v) => pad + (H - pad * 2) * (1 - (v - lo) / (hi - lo || 1));
+  const eq = G.equityCurve.map((v) => (v / START_ASSET) * s.o[G.start]);
+  let lo = Math.min(Math.min(...closes), Math.min(...eq));
+  let hi = Math.max(Math.max(...closes), Math.max(...eq));
+  const span = (hi - lo) || 1;
+  lo -= span * 0.08; hi += span * 0.08; // 마커/선 두께 여유
+  const pad = big ? 24 : 14;
+  const x = (d) => ox + pad + (d / (N - 1)) * (w - pad * 2);
+  const y = (v) => oy + pad + (h - pad * 2) * (1 - (v - lo) / (hi - lo));
 
   ctx.beginPath();
   closes.forEach((v, d) => (d ? ctx.lineTo(x(d), y(v)) : ctx.moveTo(x(d), y(v))));
-  ctx.strokeStyle = "#8b93b8"; ctx.lineWidth = 2; ctx.stroke();
+  ctx.strokeStyle = "#8b93b8"; ctx.lineWidth = big ? 2.5 : 2; ctx.stroke();
 
   ctx.beginPath();
-  G.equityCurve.forEach((v, d) => {
-    const scaled = (v / START_ASSET) * s.o[G.start];
-    d ? ctx.lineTo(x(d), y(scaled)) : ctx.moveTo(x(d), y(scaled));
-  });
-  ctx.strokeStyle = "#ffd84d"; ctx.lineWidth = 2.5; ctx.stroke();
+  eq.forEach((v, d) => (d ? ctx.lineTo(x(d), y(v)) : ctx.moveTo(x(d), y(v))));
+  ctx.strokeStyle = "#ffd84d"; ctx.lineWidth = big ? 3.5 : 2.5; ctx.stroke();
 
-  ctx.font = "13px sans-serif"; ctx.textAlign = "center";
+  ctx.font = `${big ? 19 : 13}px sans-serif`; ctx.textAlign = "center";
   for (const t of G.trades) {
     ctx.fillStyle = t.side === "buy" ? "#ff4d4d" : "#4d7fff";
-    ctx.fillText(t.side === "buy" ? "▲" : "▼", x(t.day), y(closes[t.day]) + (t.side === "buy" ? 16 : -8));
+    const off = t.side === "buy" ? (big ? 24 : 16) : (big ? -12 : -8);
+    ctx.fillText(t.side === "buy" ? "▲" : "▼", x(t.day), y(closes[t.day]) + off);
   }
 
-  ctx.textAlign = "left"; ctx.font = "12px sans-serif";
-  ctx.fillStyle = "#8b93b8"; ctx.fillText("— 주가", pad + 4, 18);
-  ctx.fillStyle = "#ffd84d"; ctx.fillText("— 내 자산", pad + 60, 18);
+  ctx.textAlign = "left"; ctx.font = `${big ? 20 : 12}px sans-serif`;
+  ctx.fillStyle = "#8b93b8"; ctx.fillText("— 주가", ox + pad + 4, oy + (big ? 30 : 18));
+  ctx.fillStyle = "#ffd84d"; ctx.fillText("— 내 자산", ox + pad + (big ? 110 : 60), oy + (big ? 30 : 18));
+}
+
+function drawResultChart() {
+  const cv = $("#r-chart"), ctx = cv.getContext("2d");
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  paintResultCurves(ctx, 0, 0, cv.width, cv.height, false);
 }
 
 // ── 기록 (localStorage) ──
@@ -697,39 +717,73 @@ function wrapText(ctx, text, x, y, maxW, lh) {
   ctx.fillText(line, x, yy);
 }
 
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
 async function saveCard() {
   const r = G.result, s = G.stock;
   const cv = $("#card-canvas"), ctx = cv.getContext("2d");
-  const W = 1080, H = 1080;
+  const W = 1080, H = 1480;
+  cv.width = W; cv.height = H;
   const bg = ctx.createLinearGradient(0, 0, W, H);
   bg.addColorStop(0, "#131830"); bg.addColorStop(1, "#0a0d18");
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#ffd84d"; ctx.font = "700 46px Pretendard, sans-serif";
-  ctx.fillText("📉 단타 적성검사", W / 2, 110);
+  ctx.fillStyle = "#ffd84d"; ctx.font = "700 44px Pretendard, sans-serif";
+  ctx.fillText("📉 단타 적성검사", W / 2, 92);
 
+  // 등급 배지
   ctx.strokeStyle = "#ffd84d"; ctx.lineWidth = 6;
-  ctx.beginPath(); ctx.arc(W / 2, 330, 150, 0, Math.PI * 2); ctx.stroke();
-  ctx.fillStyle = "#ffd84d"; ctx.font = "900 180px Pretendard, sans-serif";
-  ctx.fillText(r.grade, W / 2, 395);
+  ctx.beginPath(); ctx.arc(W / 2, 250, 118, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = "#ffd84d"; ctx.font = "900 150px Pretendard, sans-serif";
+  ctx.fillText(r.grade, W / 2, 303);
 
-  ctx.fillStyle = "#eef1ff"; ctx.font = "700 50px Pretendard, sans-serif";
-  ctx.fillText(`${s.name} (${s.t}) 1년 단타`, W / 2, 580);
-  ctx.fillStyle = "#8b93b8"; ctx.font = "400 36px Pretendard, sans-serif";
-  ctx.fillText(`${fmtDate(s.d[G.start])} ~ ${fmtDate(s.d[bar(N - 1)])}`, W / 2, 640);
+  // 종목 공개
+  ctx.fillStyle = "#eef1ff"; ctx.font = "700 46px Pretendard, sans-serif";
+  ctx.fillText(`${s.name} (${s.t}) 1년 단타`, W / 2, 452);
+  ctx.fillStyle = "#8b93b8"; ctx.font = "400 32px Pretendard, sans-serif";
+  ctx.fillText(`${fmtDate(s.d[G.start])} ~ ${fmtDate(s.d[bar(N - 1)])}`, W / 2, 506);
 
-  ctx.font = "700 56px Pretendard, sans-serif";
+  // 수익률 비교
+  ctx.font = "700 50px Pretendard, sans-serif";
   ctx.fillStyle = r.myRet >= 0 ? "#ff4d4d" : "#4d7fff";
-  ctx.fillText(`나의 단타 ${pct(r.myRet)}`, W / 2, 750);
-  ctx.fillStyle = "#8b93b8"; ctx.font = "400 42px Pretendard, sans-serif";
-  ctx.fillText(`존버했다면 ${pct(r.bhRet)}`, W / 2, 820);
+  ctx.fillText(`나의 단타 ${pct(r.myRet)}  (${fmtWon(r.equity)})`, W / 2, 592);
+  ctx.fillStyle = "#8b93b8"; ctx.font = "400 38px Pretendard, sans-serif";
+  ctx.fillText(`존버했다면 ${pct(r.bhRet)}`, W / 2, 646);
 
-  ctx.fillStyle = "#ffd84d"; ctx.font = "400 34px Pretendard, sans-serif";
-  wrapText(ctx, gradeComment(r), W / 2, 920, W - 140, 46);
+  // 코멘트
+  ctx.fillStyle = "#ffd84d"; ctx.font = "400 32px Pretendard, sans-serif";
+  wrapText(ctx, gradeComment(r), W / 2, 714, W - 130, 44);
+
+  // 매매 마커가 찍힌 차트 (주가 vs 내 자산)
+  const cx = 70, cy = 800, cwd = W - 140, chh = 420;
+  ctx.fillStyle = "#0f1430";
+  roundRect(ctx, cx, cy, cwd, chh, 18); ctx.fill();
+  paintResultCurves(ctx, cx, cy, cwd, chh, true);
+
+  // 통계
+  ctx.textAlign = "center"; ctx.fillStyle = "#8b93b8"; ctx.font = "400 30px Pretendard, sans-serif";
+  const winTxt = r.winRate == null ? "-" : (r.winRate * 100).toFixed(0) + "%";
+  ctx.fillText(`매매 ${r.nTrades}회      매도 승률 ${winTxt}      최대 낙폭 -${(r.mdd * 100).toFixed(1)}%`, W / 2, 1300);
+
+  // 도전 결과(있으면)
+  if (G.challenge && G.challenge.r != null) {
+    const win = r.equity > G.challenge.r;
+    ctx.fillStyle = win ? "#ff4d4d" : "#4d7fff";
+    ctx.font = "700 34px Pretendard, sans-serif";
+    ctx.fillText(win ? `🏆 도전 승리! 상대 ${fmtWon(G.challenge.r)}` : `상대 ${fmtWon(G.challenge.r)}와 대결`, W / 2, 1360);
+  }
 
   ctx.fillStyle = "#4a5278"; ctx.font = "400 26px Pretendard, sans-serif";
-  ctx.fillText("너도 해봐 → 단타 적성검사", W / 2, 1040);
+  ctx.fillText("너도 해봐 → 단타 적성검사", W / 2, 1430);
 
   const blob = await new Promise((res) => cv.toBlob(res, "image/png"));
   const file = new File([blob], "단타적성검사.png", { type: "image/png" });

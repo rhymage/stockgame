@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>단타 적성검사 — 너 단타 해도 되는 사람이야?</title>
 <meta name="description" content="종목명을 숨긴 실제 미국주식 차트로 1년치 단타를 쳐보고 적성 등급을 받아보세요. 마지막에 종목이 공개됩니다.">
 <meta property="og:title" content="📉 단타 적성검사">
@@ -11,7 +11,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1057421991223781" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 <div class="wrap">
@@ -25,8 +25,9 @@
     <div id="challenge-banner" class="challenge-banner hidden"></div>
     <div class="rules panel">
       <div class="rule">🎲 <b>정체불명의 미국 주식</b>이 랜덤으로 선택됩니다 (섹터만 공개)</div>
-      <div class="rule">📈 차트가 <b>1년치(252봉)</b> 자동으로 흘러갑니다</div>
-      <div class="rule">💰 가상자금 <b>1,000만원</b>으로 시작, 매수/매도 버튼으로 대응하세요</div>
+      <div class="rule">📜 먼저 <b>불특정 기간의 지난 1년치 일봉</b>이 그려집니다. 흐름을 파악하세요</div>
+      <div class="rule">📈 <b>▶ 시작</b>을 누르면 이어서 1년(252봉)이 흘러가요 — 그때 <b>매수/매도</b>로 단타!</div>
+      <div class="rule">💰 가상자금 <b>1,000만원</b> · 일시정지하고 하루씩 신중하게 매매하는 것도 가능</div>
       <div class="rule">🏁 종료 후 <b>종목 공개</b> + 존버(바이앤홀드)와 성적 비교</div>
     </div>
     <button class="go-btn" id="btn-start">🚀 검사 시작</button>
@@ -44,16 +45,13 @@
     <canvas id="g-chart-full" width="1080" height="150"></canvas>
     <canvas id="g-chart" width="1080" height="340"></canvas>
     <div class="ma-legend"><span class="ma20">― 20일선</span><span class="ma60">― 60일선</span><span class="ma120">― 120일선</span></div>
-    <div class="begin-bar" id="begin-bar">
-      <p>📜 지난 1년 차트입니다. 전략을 세웠다면 시작하세요!</p>
-      <button class="go-btn" id="btn-begin">▶ 1년 단타 시작</button>
-    </div>
     <div class="play-ui hidden" id="play-ui">
+      <p class="start-hint" id="start-hint">📜 지난 1년 차트입니다. <b>▶ 1년 단타 시작</b>을 누르면 이어서 그려져요 — 미리 매수해둬도 됩니다.</p>
       <div class="playback">
         <span class="speed" id="g-speed">
           <button data-sp="0.5">0.5x</button><button data-sp="1" class="on">1x</button><button data-sp="2">2x</button>
         </span>
-        <button id="btn-pause">⏸ 정지</button>
+        <button id="btn-pause" class="start" disabled>▶ 1년 단타 시작</button>
         <button id="btn-step" disabled>⏭ +1일</button>
       </div>
       <div class="stat-row two">
@@ -113,6 +111,6 @@
     <p class="footer-links"><a href="/privacy.html">개인정보처리방침</a><a href="/about.html">서비스 소개</a></p>
   </footer>
 </div>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>
