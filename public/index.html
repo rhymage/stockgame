@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>단타 적성검사 — 너 단타 해도 되는 사람이야?</title>
+<title>차트만 보는 - 단타 적성검사 · 너 단타 해도 되는 사람이야?</title>
 <meta name="description" content="종목명을 숨긴 실제 미국주식 차트로 1년치 단타를 쳐보고 적성 등급을 받아보세요. 마지막에 종목이 공개됩니다.">
-<meta property="og:title" content="📉 단타 적성검사">
+<meta property="og:title" content="📉 차트만 보는 - 단타 적성검사">
 <meta property="og:description" content="실제 차트, 가상 자금. 당신의 단타 적성은 몇 등급? (종목은 비밀)">
 <meta property="og:type" content="website">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1057421991223781" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 <div class="wrap">
@@ -19,7 +19,7 @@
   <!-- 인트로 -->
   <section id="scr-intro" class="screen">
     <header>
-      <h1>📉 단타 적성검사</h1>
+      <h1><span class="h1-sub">차트만 보는</span><span class="h1-main">📉 단타 적성검사</span></h1>
       <p class="tagline">실제 차트, 가상자금 1,000만원. 당신의 단타 적성은?</p>
     </header>
     <div id="challenge-banner" class="challenge-banner hidden"></div>
@@ -101,6 +101,13 @@
       <input id="challenge-url" readonly>
       <button id="btn-copyurl">복사</button>
     </div>
+    <div class="r-caveat">
+      <p class="r-caveat-title">⚠️ 현실은 이 게임보다 가혹합니다</p>
+      <p>이 게임엔 <b>거래 수수료·세금이 없고</b>, <b>상장폐지·파산한 종목도 빠져</b> 있습니다.
+      실제 시장에선 비용이 수익을 깎고, 떨어지는 종목에 물타기하다 <b>0이 되는 경우</b>도 있어
+      바이앤홀드(존버) 대비 승률이 게임보다 <b>훨씬 낮아질 수밖에 없습니다</b>.</p>
+      <p>따라서 이 게임의 수익률은 <b>실제 투자 수익을 전혀 보장하지 않습니다.</b></p>
+    </div>
     <div class="ad-slot"><span>AD</span></div>
     <canvas id="card-canvas" width="1080" height="1080" style="display:none"></canvas>
   </section>
@@ -116,7 +123,7 @@
 <div class="card-modal hidden" id="card-modal">
   <div class="card-modal-inner">
     <p class="card-modal-title">📸 결과 카드</p>
-    <img id="card-preview" alt="단타 적성검사 결과 카드">
+    <img id="card-preview" alt="차트만 보는 - 단타 적성검사 결과 카드">
     <div class="card-modal-actions">
       <button id="btn-card-save">💾 이미지 저장</button>
       <button id="btn-card-copy">📋 복사</button>
@@ -126,6 +133,6 @@
   </div>
 </div>
 
-<script src="app.js?v=9"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// 단타 적성검사 — 게임 엔진
+// 차트만 보는 단타 적성검사 — 게임 엔진
 const $ = (s) => document.querySelector(s);
 const N = 252;      // 게임 구간: 1년 = 252봉
 const PRE = 252;    // 사전 공개 구간: 직전 1년
@@ -689,7 +689,7 @@ function challengeUrl() {
 
 async function shareChallenge() {
   const r = G.result;
-  const text = `📉 단타 적성검사 ${r.grade}등급! ${G.stock.name} 1년 단타로 ${pct(r.myRet)} (존버는 ${pct(r.bhRet)}). 같은 차트로 나를 이겨봐 ⚔️`;
+  const text = `📉 차트만 보는 - 단타 적성검사 ${r.grade}등급! ${G.stock.name} 1년 단타로 ${pct(r.myRet)} (존버는 ${pct(r.bhRet)}). 같은 차트로 나를 이겨봐 ⚔️`;
   const url = challengeUrl();
   // 클릭 즉시 도전장(메시지+링크) 클립보드 복사
   try {
@@ -743,8 +743,8 @@ async function saveCard() {
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
   ctx.textAlign = "center";
-  ctx.fillStyle = "#ffd84d"; ctx.font = "700 44px Pretendard, sans-serif";
-  ctx.fillText("📉 단타 적성검사", W / 2, 92);
+  ctx.fillStyle = "#ffd84d"; ctx.font = "700 40px Pretendard, sans-serif";
+  ctx.fillText("📉 차트만 보는 - 단타 적성검사", W / 2, 92);
 
   // 등급 배지
   ctx.strokeStyle = "#ffd84d"; ctx.lineWidth = 6;
@@ -789,7 +789,7 @@ async function saveCard() {
   }
 
   ctx.fillStyle = "#4a5278"; ctx.font = "400 26px Pretendard, sans-serif";
-  ctx.fillText("너도 해봐 → 단타 적성검사", W / 2, 1430);
+  ctx.fillText("너도 해봐 → 차트만 보는 - 단타 적성검사", W / 2, 1430);
 
   const blob = await new Promise((res) => cv.toBlob(res, "image/png"));
   openCardModal(blob);
