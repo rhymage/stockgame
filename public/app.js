@@ -162,7 +162,7 @@ function togglePause() {
     G.paused = false;
     gaEvent("game_start", { challenge_mode: G.challenge ? "challenge" : "standard" });
     $("#start-hint").classList.add("hidden");
-    btn.textContent = "⏸ 정지";
+    btn.textContent = "⏸ 일시정지";
     btn.className = "";
     $("#btn-step").disabled = true;
     G.timer = setInterval(tick, 250 / G.speed);
@@ -170,7 +170,7 @@ function togglePause() {
   }
   if (G.paused) {
     G.paused = false;
-    btn.textContent = "⏸ 정지";
+    btn.textContent = "⏸ 일시정지";
     btn.classList.remove("paused");
     G.timer = setInterval(tick, 250 / G.speed);
   } else {
