@@ -23,6 +23,26 @@ const SECTOR_EN = {
   "산업재":"Industrials", "여행/항공":"Travel/Airlines", "미디어/통신":"Media/Telecom",
 };
 
+const STOCK_EN = {
+  AAL:"American Airlines", AAPL:"Apple", ABBV:"AbbVie", ABNB:"Airbnb", ADBE:"Adobe",
+  AMAT:"Applied Materials", AMC:"AMC", AMD:"AMD", AMZN:"Amazon", AVGO:"Broadcom",
+  AXP:"American Express", BA:"Boeing", BAC:"Bank of America", "BRK-B":"Berkshire Hathaway",
+  CAT:"Caterpillar", CCL:"Carnival", COIN:"Coinbase", COST:"Costco", CRM:"Salesforce",
+  CSCO:"Cisco", CVX:"Chevron", DAL:"Delta Air Lines", DASH:"DoorDash", DDOG:"Datadog",
+  DE:"Deere", DIS:"Disney", DOCU:"DocuSign", F:"Ford", GE:"GE", GM:"GM", GME:"GameStop",
+  GOOGL:"Google", GS:"Goldman Sachs", HD:"Home Depot", HOOD:"Robinhood", IBM:"IBM",
+  INTC:"Intel", JNJ:"Johnson & Johnson", JPM:"JPMorgan", KO:"Coca-Cola", LCID:"Lucid",
+  LLY:"Eli Lilly", LYFT:"Lyft", MA:"Mastercard", MAR:"Marriott", MCD:"McDonald's",
+  META:"Meta", MRNA:"Moderna", MS:"Morgan Stanley", MSFT:"Microsoft", MU:"Micron",
+  NET:"Cloudflare", NFLX:"Netflix", NIO:"NIO", NKE:"Nike", NVDA:"NVIDIA", ORCL:"Oracle",
+  OXY:"Occidental Petroleum", PEP:"PepsiCo", PFE:"Pfizer", PINS:"Pinterest", PLTR:"Palantir",
+  PYPL:"PayPal", QCOM:"Qualcomm", RBLX:"Roblox", RIVN:"Rivian", ROKU:"Roku",
+  SBUX:"Starbucks", SHOP:"Shopify", SNAP:"Snap", SNOW:"Snowflake", SPOT:"Spotify",
+  T:"AT&T", TGT:"Target", TMUS:"T-Mobile", TSLA:"Tesla", TSM:"TSMC",
+  TXN:"Texas Instruments", U:"Unity", UBER:"Uber", UNH:"UnitedHealth", V:"Visa",
+  VZ:"Verizon", WMT:"Walmart", XOM:"ExxonMobil", ZM:"Zoom",
+};
+
 // ── 다국어 (KO / EN) ──
 const STRINGS = {
   ko: {
@@ -49,6 +69,7 @@ const STRINGS = {
     otherGame:"선물코인 적성검사 해보기",
     cardModalTitle:"📸 결과 카드", shareSave:"저장", shareCopy:"복사", shareNativeBtn:"공유", closeBtn:"닫기 ✕",
     footerDisclaimer:"본 게임은 재미를 위한 것으로 투자 권유가 아니며, 게임 성적은 실제 투자 실력을 보장하지 않습니다.",
+    footerPrivacy:"개인정보처리방침", footerAbout:"서비스 소개",
     previewPhase:"지난 1년",
     btnPlayLoading:"⏳ 차트 그리는 중", btnPlayStart:"▶ 1년 단타 시작",
     btnPlayPause:"⏸ 일시정지", btnPlayResume:"▶ 재개", btnStep:"⏭ +1일",
@@ -139,6 +160,7 @@ const STRINGS = {
     otherGame:"Try the Crypto Futures Test",
     cardModalTitle:"📸 Result Card", shareSave:"Save", shareCopy:"Copy", shareNativeBtn:"Share", closeBtn:"Close ✕",
     footerDisclaimer:"For entertainment only — not investment advice. Game results do not guarantee actual trading performance.",
+    footerPrivacy:"Privacy Policy", footerAbout:"About",
     previewPhase:"Past 1 Year",
     btnPlayLoading:"⏳ Drawing chart…", btnPlayStart:"▶ Start Year Trading",
     btnPlayPause:"⏸ Pause", btnPlayResume:"▶ Resume", btnStep:"⏭ +1 Day",
@@ -212,6 +234,7 @@ let LOCALE = (() => {
   return navigator.language.startsWith("ko") ? "ko" : "en";
 })();
 const t = (key) => STRINGS[LOCALE][key];
+const stockName = (stock) => LOCALE === "en" ? (STOCK_EN[stock.t] || stock.t) : stock.name;
 
 let MANIFEST = null;
 
@@ -846,7 +869,7 @@ function renderResult() {
   $("#challenge-copy").classList.add("hidden");
   $("#btn-challenge").innerHTML = t("btnChallenge");
 
-  $("#r-name").textContent = `${SECTOR_EMOJI[s.sector] || "📈"} ${s.name} (${s.t})`;
+  $("#r-name").textContent = `${SECTOR_EMOJI[s.sector] || "📈"} ${stockName(s)} (${s.t})`;
   $("#r-period").textContent = t("rPeriod")(fmtDate(s.d[G.start]), fmtDate(s.d[bar(N - 1)]));
   $("#r-grade").textContent = r.grade;
   $("#r-comment").innerHTML = gradeComment(r) + '<br><span class="r-behavior">' + behaviorTag() + "</span>";
@@ -948,7 +971,7 @@ function renderDash() {
       <span>${t("dashBest")} <b>${best}</b></span>
     </div>
     ${h.slice(0, 5).map((x) =>
-      `<div class="hist"><span>${t("dashGradeEntry")(x.grade)} · ${x.name}</span><span>${t("dashRowSuffix")(pct(x.ret), pct(x.bh))}</span></div>`
+      `<div class="hist"><span>${t("dashGradeEntry")(x.grade)} · ${stockName(x)}</span><span>${t("dashRowSuffix")(pct(x.ret), pct(x.bh))}</span></div>`
     ).join("")}`;
 }
 
@@ -1029,7 +1052,7 @@ async function saveCard() {
 
   // 종목 공개
   ctx.fillStyle = "#eef1ff"; ctx.font = "700 46px Pretendard, sans-serif";
-  ctx.fillText(`${s.name} (${s.t}) ${t("cardPeriodLabel")}`, W / 2, 452);
+  ctx.fillText(`${stockName(s)} (${s.t}) ${t("cardPeriodLabel")}`, W / 2, 452);
   ctx.fillStyle = "#8b93b8"; ctx.font = "400 32px Pretendard, sans-serif";
   ctx.fillText(`${fmtDate(s.d[G.start])} ~ ${fmtDate(s.d[bar(N - 1)])}`, W / 2, 506);
 
