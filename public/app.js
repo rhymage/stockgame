@@ -14,6 +14,15 @@ const SECTOR_EMOJI = {
   "여행/항공": "✈️", "미디어/통신": "📡",
 };
 
+// ── 섹터 영문명 ──
+const SECTOR_EN = {
+  "빅테크":"Big Tech", "반도체":"Semiconductors", "소프트웨어/클라우드":"Software/Cloud",
+  "인터넷/플랫폼":"Internet/Platform", "핀테크/결제":"Fintech/Payments",
+  "전기차/자동차":"EV/Auto", "소비재/유통":"Consumer/Retail", "식음료":"Food & Bev",
+  "헬스케어/제약":"Healthcare/Pharma", "금융":"Finance", "에너지":"Energy",
+  "산업재":"Industrials", "여행/항공":"Travel/Airlines", "미디어/통신":"Media/Telecom",
+};
+
 // ── 다국어 (KO / EN) ──
 const STRINGS = {
   ko: {
@@ -28,6 +37,8 @@ const STRINGS = {
     ma20:"― 20일선", ma60:"― 60일선", ma120:"― 120일선",
     startHint:"📜 지난 1년 차트입니다. <b>▶ 1년 단타 시작</b>을 누르면 이어서 그려져요 — 미리 매수해둬도 됩니다.",
     statEquityLabel:"총자산", statRetLabel:"수익률",
+    btnBuyPart:"🔴 분할매수 ¼", btnSellPart:"🔵 분할매도 ¼", btnBuyFull:"🔴 풀매수", btnSellFull:"🔵 풀매도",
+    avgRetLabel:"평단 대비",
     revealPre:"당신이 1년간 매매한 종목은...", gradeLabel:"단타 적성",
     btnChallenge:"⚔️ 친구에게 도전장 보내기",
     challengeDesc:"내가 방금 플레이한 <b>똑같은 종목·똑같은 구간</b>으로 친구가 대결하는 링크를 보냅니다.<br>친구의 결과 화면에 승패가 자동으로 표시돼요. (친구에게도 종목은 비밀)",
@@ -106,16 +117,18 @@ const STRINGS = {
   },
   en: {
     h1sub:"Trade on Charts —", h1main:"📉 Stock Day-Trading Test",
-    tagline:"Real charts, virtual ₩10M. What's your day-trading aptitude?",
+    tagline:"Real charts, virtual $10,000. What's your day-trading aptitude?",
     rule1:"🎲 A <b>mystery US stock</b> is randomly selected (sector shown)",
     rule2:"📜 First, <b>one year of daily candles</b> are drawn. Read the flow.",
     rule3:"📈 Hit <b>▶ Start</b> and the next year unfolds — <b>buy/sell</b> to day-trade!",
-    rule4:"💰 Virtual <b>₩10M</b> · Pause and trade day-by-day carefully if you want",
+    rule4:"💰 Virtual <b>$10,000</b> · Pause and trade day-by-day carefully if you want",
     rule5:"🏁 At the end, <b>stock revealed</b> + compared against buy-and-hold",
     btnStart:"🚀 Start Test", btnAgain:"🔄 Play Again", btnCard:"📸 Share Result", btnRestart:"🔄 Restart",
     ma20:"― MA20", ma60:"― MA60", ma120:"― MA120",
     startHint:"📜 Past 1-year chart. Hit <b>▶ Start Year Trading</b> to continue — you can buy in now.",
     statEquityLabel:"Total Equity", statRetLabel:"Return",
+    btnBuyPart:"🔴 Buy ¼", btnSellPart:"🔵 Sell ¼", btnBuyFull:"🔴 Full Buy", btnSellFull:"🔵 Full Sell",
+    avgRetLabel:"vs Avg Cost",
     revealPre:"The stock you traded for a year was…", gradeLabel:"Day-Trading Aptitude",
     btnChallenge:"⚔️ Challenge a Friend",
     challengeDesc:"Sends a link where your friend plays the <b>exact same stock &amp; time window</b>.<br>Win/loss appears automatically on their result. (Stock stays hidden from them too)",
@@ -226,6 +239,11 @@ function fmtWon(v) {
   }
   return `${man.toLocaleString("ko-KR")}만원`;
 }
+// 로케일별 금액 표기 (EN: $10,000 시작 기준, ₩10,000,000 = $10,000)
+function fmtMoney(v) {
+  if (LOCALE === "en") return "$" + Math.round(v / 1000).toLocaleString("en-US");
+  return fmtWon(v);
+}
 const fmtDate = (di) => `${Math.floor(di / 10000)}.${String(Math.floor(di / 100) % 100).padStart(2, "0")}.${String(di % 100).padStart(2, "0")}`;
 const bar = (i) => G.start + i; // window 인덱스(음수 = 사전 구간) → 전체 인덱스
 
@@ -256,10 +274,24 @@ function applyLocale() {
     const v = t(el.dataset.i18n);
     if (v !== undefined) el.innerHTML = v;
   });
-  if (MANIFEST) $("#f-updated").textContent = t("footerData")(MANIFEST.updated);
+  if (MANIFEST) $("#f-data").textContent = t("footerData")(MANIFEST.updated);
   const langBtn = $("#btn-lang");
   if (langBtn) langBtn.textContent = LOCALE === "ko" ? "EN" : "KO";
   document.documentElement.lang = LOCALE;
+  // 섹터 chip (게임 중에도 즉시 반영)
+  if (G.stock && G.phase !== "intro") {
+    const sName = LOCALE === "en" ? (SECTOR_EN[G.stock.sector] || G.stock.sector) : G.stock.sector;
+    $("#g-sector").textContent = `${SECTOR_EMOJI[G.stock.sector] || "📈"} ${sName} ${t("sectorUnit")}`;
+  }
+  // 플레이 버튼 텍스트 (동적 상태)
+  if (G.phase === "playing") {
+    const btn = $("#btn-pause");
+    if (btn && !btn.disabled) {
+      if (!G.started) btn.textContent = t("btnPlayStart");
+      else if (G.paused) btn.textContent = t("btnPlayResume");
+      else btn.textContent = t("btnPlayPause");
+    }
+  }
 }
 
 function setLocale(lang) {
@@ -287,7 +319,7 @@ async function init() {
     const b = $("#challenge-banner");
     b.classList.remove("hidden");
     b.innerHTML = G.challenge.r != null
-      ? t("challengeArrived")(fmtWon(G.challenge.r))
+      ? t("challengeArrived")(fmtMoney(G.challenge.r))
       : t("challengeArrivedNoScore");
   }
 
@@ -422,7 +454,8 @@ async function startGame() {
     sellWins: 0, sellCount: 0, holdDays: 0, result: null,
   });
 
-  $("#g-sector").textContent = `${SECTOR_EMOJI[stock.sector] || "📈"} ${stock.sector} ${t("sectorUnit")}`;
+  const sName = LOCALE === "en" ? (SECTOR_EN[stock.sector] || stock.sector) : stock.sector;
+  $("#g-sector").textContent = `${SECTOR_EMOJI[stock.sector] || "📈"} ${sName} ${t("sectorUnit")}`;
   $("#g-day").textContent = t("previewPhase");
   // 미리보기 단계에서도 본게임 UI를 그대로 노출 (버튼은 사전 차트 그리는 동안만 잠금)
   $("#play-ui").classList.remove("hidden");
@@ -527,7 +560,7 @@ function updateHud() {
   const equity = G.cash + stockVal;
   const ret = equity / START_ASSET - 1;
   $("#g-day").textContent = t("hudDay")(G.day + 1, N);
-  $("#g-equity").textContent = fmtWon(equity);
+  $("#g-equity").textContent = fmtMoney(equity);
   const r = $("#g-ret");
   r.textContent = pct(ret);
   r.className = ret >= 0 ? "plus" : "minus";
@@ -821,7 +854,7 @@ function renderResult() {
   const row = (label, ret, me) =>
     `<div class="row${me ? " me" : ""}"><span>${label}</span><b class="${ret >= 0 ? "plus" : "minus"}">${pct(ret)}</b></div>`;
   $("#r-vs").innerHTML =
-    row(t("vsMyTrading")(fmtWon(r.equity)), r.myRet, true) +
+    row(t("vsMyTrading")(fmtMoney(r.equity)), r.myRet, true) +
     row(t("vsSpot"), r.bhRet);
 
   $("#r-stats").innerHTML = `
@@ -834,10 +867,10 @@ function renderResult() {
     const mine = r.equity, theirs = G.challenge.r;
     cEl.classList.remove("hidden");
     cEl.innerHTML = mine > theirs
-      ? t("challengeWin")(fmtWon(mine), fmtWon(theirs))
+      ? t("challengeWin")(fmtMoney(mine), fmtMoney(theirs))
       : mine < theirs
-      ? t("challengeLose")(fmtWon(mine), fmtWon(theirs))
-      : t("challengeTie")(fmtWon(mine));
+      ? t("challengeLose")(fmtMoney(mine), fmtMoney(theirs))
+      : t("challengeTie")(fmtMoney(mine));
   } else cEl.classList.add("hidden");
 
   drawResultChart();
@@ -1003,7 +1036,7 @@ async function saveCard() {
   // 수익률 비교
   ctx.font = "700 50px Pretendard, sans-serif";
   ctx.fillStyle = r.myRet >= 0 ? "#ff4d4d" : "#4d7fff";
-  ctx.fillText(t("cardMyLine")(pct(r.myRet), fmtWon(r.equity)), W / 2, 592);
+  ctx.fillText(t("cardMyLine")(pct(r.myRet), fmtMoney(r.equity)), W / 2, 592);
   ctx.fillStyle = "#8b93b8"; ctx.font = "400 38px Pretendard, sans-serif";
   ctx.fillText(t("cardSpotLine")(pct(r.bhRet)), W / 2, 646);
 
@@ -1027,7 +1060,7 @@ async function saveCard() {
     const win = r.equity > G.challenge.r;
     ctx.fillStyle = win ? "#ff4d4d" : "#4d7fff";
     ctx.font = "700 34px Pretendard, sans-serif";
-    ctx.fillText(win ? t("cardChallengeWin")(fmtWon(G.challenge.r)) : t("cardChallengeWith")(fmtWon(G.challenge.r)), W / 2, 1360);
+    ctx.fillText(win ? t("cardChallengeWin")(fmtMoney(G.challenge.r)) : t("cardChallengeWith")(fmtMoney(G.challenge.r)), W / 2, 1360);
   }
 
   ctx.fillStyle = "#4a5278"; ctx.font = "400 26px Pretendard, sans-serif";

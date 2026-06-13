@@ -18,7 +18,7 @@
 </script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 <div class="wrap">
@@ -58,7 +58,7 @@
           <button data-sp="0.5">0.5x</button><button data-sp="1" class="on">1x</button><button data-sp="2">2x</button>
         </span>
         <button id="btn-pause" class="start" disabled>▶ 1년 단타 시작</button>
-        <button id="btn-step" disabled>⏭ +1일</button>
+        <button id="btn-step" disabled data-i18n="btnStep">⏭ +1일</button>
       </div>
       <div class="stat-row two">
         <div class="stat"><span data-i18n="statEquityLabel">총자산</span><b id="g-equity">100.0</b></div>
@@ -66,16 +66,16 @@
       </div>
       <div class="trade-rows">
         <div class="trade-row main">
-          <button class="btn-buy" id="btn-buy-part">🔴 분할매수 ¼<span class="gauge gg-buy"></span></button>
-          <button class="btn-sell" id="btn-sell-part">🔵 분할매도 ¼<span class="gauge gg-sell"></span></button>
+          <button class="btn-buy" id="btn-buy-part"><span data-i18n="btnBuyPart">🔴 분할매수 ¼</span><span class="gauge gg-buy"></span></button>
+          <button class="btn-sell" id="btn-sell-part"><span data-i18n="btnSellPart">🔵 분할매도 ¼</span><span class="gauge gg-sell"></span></button>
         </div>
         <div class="trade-row main">
-          <button class="btn-buy" id="btn-buy-full">🔴 풀매수<span class="gauge gg-buy"></span></button>
-          <button class="btn-sell" id="btn-sell-full">🔵 풀매도<span class="gauge gg-sell"></span></button>
+          <button class="btn-buy" id="btn-buy-full"><span data-i18n="btnBuyFull">🔴 풀매수</span><span class="gauge gg-buy"></span></button>
+          <button class="btn-sell" id="btn-sell-full"><span data-i18n="btnSellFull">🔵 풀매도</span><span class="gauge gg-sell"></span></button>
         </div>
       </div>
       <p class="toast" id="g-toast"></p>
-      <div class="big-ret hidden" id="g-bigret"><span>평단 대비</span><b>+0.0%</b></div>
+      <div class="big-ret hidden" id="g-bigret"><span data-i18n="avgRetLabel">평단 대비</span><b>+0.0%</b></div>
     </div>
   </section>
 
@@ -119,7 +119,7 @@
   </section>
 
   <footer>
-    <p>실제 과거 시세(야후 파이낸스, 분할 반영) 기반 모의투자 게임 · 수수료/세금 미반영 · <span id="f-updated"></span></p>
+    <p id="f-data"></p>
     <p data-i18n="footerDisclaimer">본 게임은 재미를 위한 것으로 투자 권유가 아니며, 게임 성적은 실제 투자 실력을 보장하지 않습니다.</p>
     <p class="footer-links"><a href="https://app.rhymage.com/">Rhymage Apps</a><a href="/privacy.html">개인정보처리방침</a><a href="/about.html">서비스 소개</a><button class="lang-toggle" id="btn-lang">EN</button></p>
   </footer>
@@ -160,6 +160,6 @@
   </div>
 </div>
 
-<script src="app.js?v=19"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>
