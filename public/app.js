@@ -97,9 +97,7 @@ async function init() {
   $("#btn-card").onclick = saveCard;
   $("#btn-card-save").onclick = downloadCard;
   $("#btn-card-copy").onclick = copyCard;
-  $("#btn-share-x").onclick = () => shareToSocial("x");
-  $("#btn-share-fb").onclick = () => shareToSocial("fb");
-  $("#btn-share-threads").onclick = () => shareToSocial("threads");
+  $("#btn-share-native").onclick = shareNative;
   $("#btn-card-close").onclick = closeCardModal;
   $("#card-modal").addEventListener("click", (e) => {
     if (e.target === $("#card-modal")) closeCardModal(); // 배경 클릭 시 닫기
@@ -872,18 +870,32 @@ function downloadCard() {
   cardModalMsg("이미지를 저장했어요! 💾");
 }
 
-function shareToSocial(platform) {
+async function shareNative() {
   const r = G.result;
   if (!r) return;
   const url = location.origin + location.pathname;
   const text = `📊 단타 적성검사 ${r.grade}등급! 1년 단타로 ${pct(r.myRet)} (존버 ${pct(r.bhRet)}). 너도 한번 해봐 ⚔️`;
-  if (platform === "x")
-    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text + "\n" + url), "_blank", "noopener");
-  else if (platform === "fb")
-    window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank", "noopener");
-  else if (platform === "threads")
-    window.open("https://www.threads.net/intent/post?text=" + encodeURIComponent(text + "\n" + url), "_blank", "noopener");
-  gaEvent("card_share", { platform, grade: r.grade });
+  try {
+    if (navigator.share) {
+      const shareData = { text, url };
+      if (CARD_BLOB && navigator.canShare) {
+        const file = new File([CARD_BLOB], "단타적성검사.png", { type: "image/png" });
+        if (navigator.canShare({ files: [file] })) shareData.files = [file];
+      }
+      await navigator.share(shareData);
+      gaEvent("card_share", { platform: "native", grade: r.grade });
+      return;
+    }
+  } catch (e) {
+    if (e.name === "AbortError") return;
+  }
+  try {
+    await navigator.clipboard.writeText(text + "\n" + url);
+    cardModalMsg("텍스트와 링크를 복사했어요! 어디든 붙여넣기 해서 공유하세요 📋");
+  } catch {
+    cardModalMsg("공유 기능이 지원되지 않아요. '복사' 버튼을 이용해 주세요 🙏");
+  }
+  gaEvent("card_share", { platform: "clipboard_fallback", grade: r.grade });
 }
 
 async function copyCard() {
