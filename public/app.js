@@ -97,6 +97,9 @@ async function init() {
   $("#btn-card").onclick = saveCard;
   $("#btn-card-save").onclick = downloadCard;
   $("#btn-card-copy").onclick = copyCard;
+  $("#btn-share-x").onclick = () => shareToSocial("x");
+  $("#btn-share-fb").onclick = () => shareToSocial("fb");
+  $("#btn-share-threads").onclick = () => shareToSocial("threads");
   $("#btn-card-close").onclick = closeCardModal;
   $("#card-modal").addEventListener("click", (e) => {
     if (e.target === $("#card-modal")) closeCardModal(); // 배경 클릭 시 닫기
@@ -867,6 +870,20 @@ function downloadCard() {
   a.click();
   gaEvent("card_save", { grade: G.result?.grade || "unknown" });
   cardModalMsg("이미지를 저장했어요! 💾");
+}
+
+function shareToSocial(platform) {
+  const r = G.result;
+  if (!r) return;
+  const url = location.origin + location.pathname;
+  const text = `📊 단타 적성검사 ${r.grade}등급! 1년 단타로 ${pct(r.myRet)} (존버 ${pct(r.bhRet)}). 너도 한번 해봐 ⚔️`;
+  if (platform === "x")
+    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text + "\n" + url), "_blank", "noopener");
+  else if (platform === "fb")
+    window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank", "noopener");
+  else if (platform === "threads")
+    window.open("https://www.threads.net/intent/post?text=" + encodeURIComponent(text + "\n" + url), "_blank", "noopener");
+  gaEvent("card_share", { platform, grade: r.grade });
 }
 
 async function copyCard() {
