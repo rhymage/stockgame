@@ -14,6 +14,192 @@ const SECTOR_EMOJI = {
   "여행/항공": "✈️", "미디어/통신": "📡",
 };
 
+// ── 다국어 (KO / EN) ──
+const STRINGS = {
+  ko: {
+    h1sub:"차트만 보고 매매하는", h1main:"📉 단타 적성검사",
+    tagline:"실제 차트, 가상자금 1,000만원. 당신의 단타 적성은?",
+    rule1:"🎲 <b>정체불명의 미국 주식</b>이 랜덤으로 선택됩니다 (섹터만 공개)",
+    rule2:"📜 먼저 <b>불특정 기간의 지난 1년치 일봉</b>이 그려집니다. 흐름을 파악하세요",
+    rule3:"📈 <b>▶ 시작</b>을 누르면 이어서 1년(252봉)이 흘러가요 — 그때 <b>매수/매도</b>로 단타!",
+    rule4:"💰 가상자금 <b>1,000만원</b> · 일시정지하고 하루씩 신중하게 매매하는 것도 가능",
+    rule5:"🏁 종료 후 <b>종목 공개</b> + 존버(바이앤홀드)와 성적 비교",
+    btnStart:"🚀 검사 시작", btnAgain:"🔄 한 판 더", btnCard:"📸 결과 공유", btnRestart:"🔄 다시시작",
+    ma20:"― 20일선", ma60:"― 60일선", ma120:"― 120일선",
+    startHint:"📜 지난 1년 차트입니다. <b>▶ 1년 단타 시작</b>을 누르면 이어서 그려져요 — 미리 매수해둬도 됩니다.",
+    statEquityLabel:"총자산", statRetLabel:"수익률",
+    revealPre:"당신이 1년간 매매한 종목은...", gradeLabel:"단타 적성",
+    btnChallenge:"⚔️ 친구에게 도전장 보내기",
+    challengeDesc:"내가 방금 플레이한 <b>똑같은 종목·똑같은 구간</b>으로 친구가 대결하는 링크를 보냅니다.<br>친구의 결과 화면에 승패가 자동으로 표시돼요. (친구에게도 종목은 비밀)",
+    copyBtn:"복사",
+    caveatTitle:"⚠️ 현실은 이 게임보다 가혹합니다",
+    caveat1:"이 게임엔 <b>거래 수수료·세금이 없고</b>, <b>상장폐지·파산한 종목도 빠져</b> 있습니다. 실제 시장에선 비용이 수익을 깎고, 떨어지는 종목에 물타기하다 <b>0이 되는 경우</b>도 있어 바이앤홀드(존버) 대비 승률이 게임보다 <b>훨씬 낮아질 수밖에 없습니다</b>.",
+    caveat2:"따라서 이 게임의 수익률은 <b>실제 투자 수익을 전혀 보장하지 않습니다.</b>",
+    otherGame:"선물코인 적성검사 해보기",
+    cardModalTitle:"📸 결과 카드", shareSave:"저장", shareCopy:"복사", shareNativeBtn:"공유", closeBtn:"닫기 ✕",
+    footerDisclaimer:"본 게임은 재미를 위한 것으로 투자 권유가 아니며, 게임 성적은 실제 투자 실력을 보장하지 않습니다.",
+    previewPhase:"지난 1년",
+    btnPlayLoading:"⏳ 차트 그리는 중", btnPlayStart:"▶ 1년 단타 시작",
+    btnPlayPause:"⏸ 일시정지", btnPlayResume:"▶ 재개", btnStep:"⏭ +1일",
+    toastNoCash:"현금이 없어요 😅", toastNoStock:"보유 주식이 없어요 😅",
+    toastFilled:(m,s)=>`${m}${s} 체결 (현재가)`,
+    toastQueued:(m,s)=>`${m}${s} 주문 — 다음 봉 시가 체결`,
+    toastModeFull:"풀", toastModePart:"분할",
+    toastSideBuy:"매수", toastSideSell:"매도",
+    confirmRestart:"이 판을 버리고 다시 시작할까요?", confirmOk:"다시 시작", confirmCancel:"취소",
+    chartRemain:(n)=>`⏳ 남은 ${n}일`,
+    chartStart:"▶ 시작",
+    avgCostLabel:"평단",
+    chartPriceLine:"— 주가", chartAssetLine:"— 내 자산",
+    statTrades:"매매 횟수", statWinRate:"매도 승률", statMdd:"최대 낙폭",
+    statTradesVal:(n)=>`${n}회`,
+    vsMyTrading:(won)=>`🫵 나의 단타 (최종 ${won})`,
+    vsSpot:"💎 그냥 존버했다면 (바이앤홀드)",
+    challengeWin:(me,them)=>`🏆 <b>승리!</b> 나 ${me} vs 상대 ${them}`,
+    challengeLose:(me,them)=>`😭 <b>패배...</b> 나 ${me} vs 상대 ${them}`,
+    challengeTie:(me)=>`🤝 무승부! 둘 다 ${me}`,
+    challengeCopied:"✅ 복사됐어요! 카톡창에 붙여넣어 보내세요.<small>다시 누르면 재복사</small>",
+    challengeManual:"아래 링크를 복사해서 친구에게 보내세요 👇",
+    cardSaved:"이미지를 저장했어요! 💾",
+    cardCopied:"카드 이미지가 복사됐어요! 붙여넣기 하세요 📋",
+    cardCopyFail:"이 브라우저는 이미지 복사가 안 돼요. '이미지 저장'을 이용해 주세요 🙏",
+    shareText:(grade,ret,bh)=>`📊 단타 적성검사 ${grade}등급! 1년 단타로 ${ret} (존버 ${bh}). 너도 한번 해봐 ⚔️`,
+    shareNativeFallback:"텍스트와 링크를 복사했어요! 어디든 붙여넣기 해서 공유하세요 📋",
+    shareNativeFail:"공유 기능이 지원되지 않아요. '복사' 버튼을 이용해 주세요 🙏",
+    dashTitle:"📊 내 단타 기록",
+    dashGames:"판수", dashBeats:"존버 이긴 비율", dashAlpha:"평균 알파", dashBest:"최고 등급",
+    dashGradeEntry:(g)=>`${g}등급`,
+    dashRowSuffix:(me,hold)=>`나 ${me} / 존버 ${hold}`,
+    cardFilename:"단타적성검사.png",
+    cardTitle:"📉 차트만 보고 매매하는 - 단타 적성검사",
+    cardPeriodLabel:"1년 단타",
+    cardMyLine:(ret,won)=>`나의 단타 ${ret}  (${won})`,
+    cardSpotLine:(ret)=>`존버했다면 ${ret}`,
+    cardStats:(t,w,m)=>`매매 ${t}회      매도 승률 ${w}      최대 낙폭 -${m}%`,
+    cardChallengeWin:(them)=>`🏆 도전 승리! 상대 ${them}`,
+    cardChallengeWith:(them)=>`상대 ${them}와 대결`,
+    cardFootnote:"너도 해봐 → 차트만 보고 매매하는 - 단타 적성검사",
+    challengeArrived:(won)=>`⚔️ <b>도전장 도착!</b> 상대의 최종 자산은 <b>${won}</b>. 같은 차트로 이겨보세요.`,
+    challengeArrivedNoScore:"⚔️ <b>도전장 도착!</b> 친구와 같은 차트로 대결합니다.",
+    footerData:(date)=>`실제 과거 시세(야후 파이낸스, 분할 반영) 기반 모의투자 게임 · 수수료/세금 미반영 · ${date} 데이터`,
+    sectorUnit:"섹터",
+    hudDay:(d,n)=>`Day ${d}/${n}`,
+    rPeriod:(from,to)=>`${from} ~ ${to} 구간이었습니다`,
+    gradePosProfit:(ret,bh)=>`💰 ${ret} 익절 성공 — 익절은 언제나 옳습니다! 다만 그냥 들고만 있었어도 ${bh}였기에 단타 점수는 아쉬워요.`,
+    gradeProfitC:(bh)=>`💰 익절은 옳다! 수익도 냈고 존버(${bh})와 비슷한 성적. 나쁘지 않아요. 🙂`,
+    gradeComment:{
+      SSS:["존버 수익률을 50%p 넘게 압도했습니다. 전설적인 한 판입니다. 🏆","폭락장을 완벽하게 피했습니다. 시장에서 순간이동하셨나요? 🛸"],
+      SS:["존버를 크게 앞질렀습니다. 차트가 당신에게 말을 거는 수준입니다. 🔥","폭락장에서 놀라운 방어력을 보여줬습니다. 생존을 넘어 압승입니다. 🛡️"],
+      S:["당신... 혹시 여의도에서 오셨나요? 시장을 압살했습니다. 👑","폭락장에서 이 정도 방어라니. 도망치는 것도 실력입니다. 🏃"],
+      A:["단타 적성 확실합니다. 실전엔 수수료가 있다는 것만 기억하세요. 😎","시장은 무너졌지만 당신은 덜 무너졌습니다. 생존왕. 🪖"],
+      B:["존버보다 잘했습니다. 소질이 보여요. 🙂","손실은 났지만 존버보단 나았어요. 위기 감지 능력 있음. 🦊"],
+      C:["그냥 사두고 잠이나 잘 걸 그랬습니다. 성적은 존버와 비슷해요. 😴","이러나 저러나 비슷하게 잃었습니다. 마음만 고생했네요. 😮‍💨"],
+      D:["손가락이 수익률을 갉아먹었습니다. 매매 버튼과 거리두기를 권합니다. 🫠","떨어지는 칼날을 자꾸 잡으셨군요. 손은 주머니에. 🔪"],
+      F:["축하합니다. 당신은 시장의 유동성 공급자였습니다. 단타 금지. 🚫","고점 매수 저점 매도의 정석. 교과서에 반면교사로 실립니다. 📚"],
+      "?":["매매를 안 하면 적성을 알 수 없습니다. 다음 판엔 버튼을 눌러보세요. 👀","매매를 안 하면 적성을 알 수 없습니다. 다음 판엔 버튼을 눌러보세요. 👀"],
+    },
+    behaviorNoEntry:"👀 단 한 번도 매매하지 않은 관전형",
+    behaviorOvertrading:(n)=>`🔥 뇌동매매 경보 — 1년간 ${n}회 매매`,
+    behaviorHodler:"💎 사실상 존버였습니다",
+    behaviorWinRate:(pct)=>`🎯 매도 승률 ${pct}% — 타이밍 감각 있음`,
+    behaviorSummary:(n)=>`✂️ 총 ${n}회 매매`,
+  },
+  en: {
+    h1sub:"Trade on Charts —", h1main:"📉 Stock Day-Trading Test",
+    tagline:"Real charts, virtual ₩10M. What's your day-trading aptitude?",
+    rule1:"🎲 A <b>mystery US stock</b> is randomly selected (sector shown)",
+    rule2:"📜 First, <b>one year of daily candles</b> are drawn. Read the flow.",
+    rule3:"📈 Hit <b>▶ Start</b> and the next year unfolds — <b>buy/sell</b> to day-trade!",
+    rule4:"💰 Virtual <b>₩10M</b> · Pause and trade day-by-day carefully if you want",
+    rule5:"🏁 At the end, <b>stock revealed</b> + compared against buy-and-hold",
+    btnStart:"🚀 Start Test", btnAgain:"🔄 Play Again", btnCard:"📸 Share Result", btnRestart:"🔄 Restart",
+    ma20:"― MA20", ma60:"― MA60", ma120:"― MA120",
+    startHint:"📜 Past 1-year chart. Hit <b>▶ Start Year Trading</b> to continue — you can buy in now.",
+    statEquityLabel:"Total Equity", statRetLabel:"Return",
+    revealPre:"The stock you traded for a year was…", gradeLabel:"Day-Trading Aptitude",
+    btnChallenge:"⚔️ Challenge a Friend",
+    challengeDesc:"Sends a link where your friend plays the <b>exact same stock &amp; time window</b>.<br>Win/loss appears automatically on their result. (Stock stays hidden from them too)",
+    copyBtn:"Copy",
+    caveatTitle:"⚠️ Reality is far harsher than this game",
+    caveat1:"This game has <b>no trading fees or taxes</b>, and <b>delisted or bankrupt stocks are excluded</b>. In real markets, costs erode gains and averaging down can go to <b>zero</b>, making it much <b>harder to beat buy-and-hold</b> than in this game.",
+    caveat2:"Therefore, this game's returns <b>do not guarantee real investment performance in any way.</b>",
+    otherGame:"Try the Crypto Futures Test",
+    cardModalTitle:"📸 Result Card", shareSave:"Save", shareCopy:"Copy", shareNativeBtn:"Share", closeBtn:"Close ✕",
+    footerDisclaimer:"For entertainment only — not investment advice. Game results do not guarantee actual trading performance.",
+    previewPhase:"Past 1 Year",
+    btnPlayLoading:"⏳ Drawing chart…", btnPlayStart:"▶ Start Year Trading",
+    btnPlayPause:"⏸ Pause", btnPlayResume:"▶ Resume", btnStep:"⏭ +1 Day",
+    toastNoCash:"No cash left 😅", toastNoStock:"No shares held 😅",
+    toastFilled:(m,s)=>`${m} ${s} filled (current price)`,
+    toastQueued:(m,s)=>`${m} ${s} queued — fills at next candle open`,
+    toastModeFull:"Full", toastModePart:"Partial",
+    toastSideBuy:"Buy", toastSideSell:"Sell",
+    confirmRestart:"Abandon this game and restart?", confirmOk:"Restart", confirmCancel:"Cancel",
+    chartRemain:(n)=>`⏳ ${n} days left`,
+    chartStart:"▶ Start",
+    avgCostLabel:"Avg",
+    chartPriceLine:"— Stock Price", chartAssetLine:"— My Equity",
+    statTrades:"Trades", statWinRate:"Win Rate", statMdd:"Max Drawdown",
+    statTradesVal:(n)=>`${n}`,
+    vsMyTrading:(won)=>`🫵 My Trading (final: ${won})`,
+    vsSpot:"💎 Just buy-and-hold",
+    challengeWin:(me,them)=>`🏆 <b>Victory!</b> You ${me} vs opponent ${them}`,
+    challengeLose:(me,them)=>`😭 <b>Defeat...</b> You ${me} vs opponent ${them}`,
+    challengeTie:(me)=>`🤝 Draw! Both ${me}`,
+    challengeCopied:"✅ Copied! Paste it to your friend.<small>Click again to recopy</small>",
+    challengeManual:"Copy the link below and send it to your friend 👇",
+    cardSaved:"Image saved! 💾",
+    cardCopied:"Card image copied! Paste anywhere 📋",
+    cardCopyFail:"This browser doesn't support image copy. Use 'Save' instead 🙏",
+    shareText:(grade,ret,bh)=>`📊 Day-Trading Test — Grade ${grade}! 1-year: ${ret} (hold: ${bh}). Try it! ⚔️`,
+    shareNativeFallback:"Text and link copied! Paste anywhere to share 📋",
+    shareNativeFail:"Sharing not supported. Use the 'Copy' button instead 🙏",
+    dashTitle:"📊 My Trading Record",
+    dashGames:"Games", dashBeats:"Beat buy-and-hold", dashAlpha:"Avg alpha", dashBest:"Best grade",
+    dashGradeEntry:(g)=>`Grade ${g}`,
+    dashRowSuffix:(me,hold)=>`Me ${me} / Hold ${hold}`,
+    cardFilename:"day-trading-test.png",
+    cardTitle:"📉 Trade on Charts — Stock Day-Trading Test",
+    cardPeriodLabel:"1-Year Trading",
+    cardMyLine:(ret,won)=>`My Trading ${ret}  (${won})`,
+    cardSpotLine:(ret)=>`Buy-and-hold: ${ret}`,
+    cardStats:(t,w,m)=>`${t} trades      Win rate ${w}      Max DD −${m}%`,
+    cardChallengeWin:(them)=>`🏆 Challenge won! Opponent: ${them}`,
+    cardChallengeWith:(them)=>`vs opponent ${them}`,
+    cardFootnote:"Try it → Stock Day-Trading Aptitude Test",
+    challengeArrived:(won)=>`⚔️ <b>Challenge received!</b> Opponent's final equity: <b>${won}</b>. Beat them!`,
+    challengeArrivedNoScore:"⚔️ <b>Challenge received!</b> Same chart as your friend.",
+    footerData:(date)=>`Simulated trading on real historical prices (Yahoo Finance, split-adjusted) · No fees/taxes · ${date} data`,
+    sectorUnit:"sector",
+    hudDay:(d,n)=>`Day ${d}/${n}`,
+    rPeriod:(from,to)=>`${from} – ${to}`,
+    gradePosProfit:(ret,bh)=>`💰 ${ret} profit taken — always right to take profit! But just holding would've given ${bh}, so day-trading score is lower.`,
+    gradeProfitC:(bh)=>`💰 Profit is right! Made gains, matching buy-and-hold (${bh}). Not bad. 🙂`,
+    gradeComment:{
+      SSS:["Beat buy-and-hold by 50%+. A legendary run. 🏆","You dodged the crash perfectly. Did you time-travel? 🛸"],
+      SS:["Crushed buy-and-hold. The chart speaks to you. 🔥","Amazing defense in a falling market. Survived and won. 🛡️"],
+      S:["...Were you a pro trader before? You crushed the market. 👑","That defense in a crash is elite. Knowing when to exit IS skill. 🏃"],
+      A:["Clear day-trading aptitude. Just remember: real trading has fees. 😎","The market fell but you fell less. Survivor king. 🪖"],
+      B:["Beat buy-and-hold. Potential showing. 🙂","Losses, but less than hodling. Decent risk sense. 🦊"],
+      C:["Should've just bought and slept. Similar score to hold. 😴","Either way, similar losses. All that stress for nothing. 😮‍💨"],
+      D:["Your fingers ate your returns. Keep hands away from the buttons. 🫠","Keep catching falling knives. Hands in pockets. 🔪"],
+      F:["Congratulations — you were the market's liquidity provider. Trading banned. 🚫","Top-buy, bottom-sell. A textbook example of what not to do. 📚"],
+      "?":["Can't measure aptitude without trading. Press some buttons next time. 👀","Can't measure aptitude without trading. Press some buttons next time. 👀"],
+    },
+    behaviorNoEntry:"👀 Observer mode — never made a trade",
+    behaviorOvertrading:(n)=>`🔥 Overtrading alert — ${n} trades in one year`,
+    behaviorHodler:"💎 Essentially just buy-and-hold",
+    behaviorWinRate:(pct)=>`🎯 ${pct}% sell win rate — solid timing sense`,
+    behaviorSummary:(n)=>`✂️ ${n} total trades`,
+  },
+};
+let LOCALE = (() => {
+  const s = localStorage.getItem("lang");
+  if (s === "ko" || s === "en") return s;
+  return navigator.language.startsWith("ko") ? "ko" : "en";
+})();
+const t = (key) => STRINGS[LOCALE][key];
+
 let MANIFEST = null;
 
 const G = {
@@ -64,10 +250,36 @@ function toast(msg) {
   toastTimer = setTimeout(() => ($("#g-toast").textContent = ""), 1500);
 }
 
+// ── 다국어 적용 ──
+function applyLocale() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const v = t(el.dataset.i18n);
+    if (v !== undefined) el.innerHTML = v;
+  });
+  if (MANIFEST) $("#f-updated").textContent = t("footerData")(MANIFEST.updated);
+  const langBtn = $("#btn-lang");
+  if (langBtn) langBtn.textContent = LOCALE === "ko" ? "EN" : "KO";
+  document.documentElement.lang = LOCALE;
+}
+
+function setLocale(lang) {
+  LOCALE = lang;
+  try { localStorage.setItem("lang", lang); } catch {}
+  applyLocale();
+  if (G.phase === "playing" || G.phase === "preview") {
+    updateHud();
+    if (G.phase === "playing") drawGameChart();
+  }
+  if (G.phase === "done" && G.result) {
+    renderResult();
+    drawResultChart();
+  }
+}
+
 // ── 초기화 ──
 async function init() {
   MANIFEST = await (await fetch("data/manifest.json")).json();
-  $("#f-updated").textContent = MANIFEST.updated + " 데이터";
+  applyLocale();
 
   const p = new URLSearchParams(location.search);
   if (p.get("g")) {
@@ -75,17 +287,19 @@ async function init() {
     const b = $("#challenge-banner");
     b.classList.remove("hidden");
     b.innerHTML = G.challenge.r != null
-      ? `⚔️ <b>도전장 도착!</b> 상대의 최종 자산은 <b>${fmtWon(G.challenge.r)}</b>. 같은 차트로 이겨보세요.`
-      : `⚔️ <b>도전장 도착!</b> 친구와 같은 차트로 대결합니다.`;
+      ? t("challengeArrived")(fmtWon(G.challenge.r))
+      : t("challengeArrivedNoScore");
   }
 
   renderDash();
+  const langBtn = $("#btn-lang");
+  if (langBtn) langBtn.onclick = () => setLocale(LOCALE === "ko" ? "en" : "ko");
   $("#btn-start").onclick = startGame;
   $("#btn-restart").onclick = async () => {
     // 진행 중이면 멈춰두고, 취소하면 재개
     const wasRunning = G.phase === "playing" && !G.paused && G.timer;
     if (wasRunning) { clearInterval(G.timer); G.timer = null; }
-    const ok = await askConfirm("이 판을 버리고 다시 시작할까요?", "다시 시작");
+    const ok = await askConfirm(t("confirmRestart"), t("confirmOk"));
     if (ok) { startGame(); return; }
     if (wasRunning) { G.timer = setInterval(tick, 250 / G.speed); }
   };
@@ -120,7 +334,7 @@ async function init() {
   $("#btn-copyurl").onclick = () => {
     const inp = $("#challenge-url");
     inp.focus(); inp.select();
-    try { document.execCommand("copy"); challengeMsg("복사됐어요! 친구에게 보내세요 ⚔️"); } catch {}
+    try { document.execCommand("copy"); challengeMsg(t("challengeCopied")); } catch {}
   };
 }
 
@@ -163,7 +377,7 @@ function togglePause() {
     G.paused = false;
     gaEvent("game_start", { challenge_mode: G.challenge ? "challenge" : "standard" });
     $("#start-hint").classList.add("hidden");
-    btn.textContent = "⏸ 일시정지";
+    btn.textContent = t("btnPlayPause");
     btn.className = "";
     $("#btn-step").disabled = true;
     G.timer = setInterval(tick, 250 / G.speed);
@@ -171,12 +385,12 @@ function togglePause() {
   }
   if (G.paused) {
     G.paused = false;
-    btn.textContent = "⏸ 일시정지";
+    btn.textContent = t("btnPlayPause");
     btn.classList.remove("paused");
     G.timer = setInterval(tick, 250 / G.speed);
   } else {
     G.paused = true;
-    btn.textContent = "▶ 재개";
+    btn.textContent = t("btnPlayResume");
     btn.classList.add("paused");
     clearInterval(G.timer); G.timer = null;
   }
@@ -208,13 +422,13 @@ async function startGame() {
     sellWins: 0, sellCount: 0, holdDays: 0, result: null,
   });
 
-  $("#g-sector").textContent = `${SECTOR_EMOJI[stock.sector] || "📈"} ${stock.sector} 섹터`;
-  $("#g-day").textContent = "지난 1년";
+  $("#g-sector").textContent = `${SECTOR_EMOJI[stock.sector] || "📈"} ${stock.sector} ${t("sectorUnit")}`;
+  $("#g-day").textContent = t("previewPhase");
   // 미리보기 단계에서도 본게임 UI를 그대로 노출 (버튼은 사전 차트 그리는 동안만 잠금)
   $("#play-ui").classList.remove("hidden");
   $("#start-hint").classList.remove("hidden");
   const pBtn = $("#btn-pause");
-  pBtn.textContent = "⏳ 차트 그리는 중";
+  pBtn.textContent = t("btnPlayLoading");
   pBtn.className = "start";
   pBtn.disabled = true;
   $("#btn-step").disabled = true;
@@ -239,7 +453,7 @@ function enterReady() {
   G.paused = true;
   G.started = false;
   const pBtn = $("#btn-pause");
-  pBtn.textContent = "▶ 1년 단타 시작";
+  pBtn.textContent = t("btnPlayStart");
   pBtn.className = "start";
   pBtn.disabled = false;
   $("#btn-step").disabled = true;
@@ -250,18 +464,19 @@ function enterReady() {
 // ── 주문 (분할 = 총자산의 1/4, 풀 = 전부 / 다음 봉 시가 체결) ──
 function order(side, mode) {
   if (G.phase !== "playing") return;
-  if (side === "buy" && G.cash < 1) return toast("현금이 없어요 😅");
-  if (side === "sell" && G.shares <= 0) return toast("보유 주식이 없어요 😅");
+  if (side === "buy" && G.cash < 1) return toast(t("toastNoCash"));
+  if (side === "sell" && G.shares <= 0) return toast(t("toastNoStock"));
+  const modeStr = mode === "full" ? t("toastModeFull") : t("toastModePart");
+  const sideStr = side === "buy" ? t("toastSideBuy") : t("toastSideSell");
   if (G.paused) {
-    // 일시정지 중에는 현재 봉 종가로 즉시 체결
     execute(side, mode, G.stock.c[bar(G.day)], G.day);
     updateHud();
     drawGameChart();
-    toast(`${mode === "full" ? "풀" : "분할"}${side === "buy" ? "매수" : "매도"} 체결 (현재가)`);
+    toast(t("toastFilled")(modeStr, sideStr));
     return;
   }
   G.pending.push({ side, mode });
-  toast(`${mode === "full" ? "풀" : "분할"}${side === "buy" ? "매수" : "매도"} 주문 — 다음 봉 시가 체결`);
+  toast(t("toastQueued")(modeStr, sideStr));
 }
 
 function execute(side, mode, price, dayIdx) {
@@ -311,7 +526,7 @@ function updateHud() {
   const stockVal = G.shares * G.stock.c[i];
   const equity = G.cash + stockVal;
   const ret = equity / START_ASSET - 1;
-  $("#g-day").textContent = `Day ${G.day + 1}/${N}`;
+  $("#g-day").textContent = t("hudDay")(G.day + 1, N);
   $("#g-equity").textContent = fmtWon(equity);
   const r = $("#g-ret");
   r.textContent = pct(ret);
@@ -394,7 +609,7 @@ function drawCandles(cv, days, { markers = true, totalSlots = null, mini = false
     ctx.setLineDash([]);
     if (mini) {
       ctx.fillStyle = "#ffd84d66"; ctx.font = "10px sans-serif"; ctx.textAlign = "left";
-      ctx.fillText("▶ 시작", x(zeroK) + 3, padT + 9);
+      ctx.fillText(t("chartStart"), x(zeroK) + 3, padT + 9);
     }
   }
 
@@ -411,8 +626,12 @@ function drawCandles(cv, days, { markers = true, totalSlots = null, mini = false
 
   // 남은 거래일 (확대 차트 상단)
   if (showRemain && G.phase === "playing") {
-    ctx.fillStyle = "#ffd84d"; ctx.font = "700 17px sans-serif"; ctx.textAlign = "right";
-    ctx.fillText(`⏳ 남은 ${N - 1 - G.day}일`, W - 10, 20);
+    ctx.save();
+    ctx.font = "800 30px sans-serif"; ctx.textAlign = "right";
+    ctx.shadowColor = "#0a0d18"; ctx.shadowBlur = 6;
+    ctx.fillStyle = "#ffd84d";
+    ctx.fillText(t("chartRemain")(N - 1 - G.day), W - 12, 34);
+    ctx.restore();
   }
 
   // 캔들
@@ -488,7 +707,7 @@ function drawCandles(cv, days, { markers = true, totalSlots = null, mini = false
       // 평단 라벨 (좌측 배지)
       ctx.fillStyle = "#ffffff";
       ctx.font = "700 12px sans-serif"; ctx.textAlign = "left";
-      const label = `평단 ${G.avgCost >= 100 ? G.avgCost.toFixed(0) : G.avgCost.toFixed(2)}`;
+      const label = `${t("avgCostLabel")} ${G.avgCost >= 100 ? G.avgCost.toFixed(0) : G.avgCost.toFixed(2)}`;
       const tw = ctx.measureText(label).width;
       ctx.fillStyle = "#ffffff22";
       ctx.fillRect(padL + 2, ay - 16, tw + 10, 16);
@@ -568,45 +787,23 @@ function endGame() {
   renderResult();
 }
 
-// [기본 멘트, 내 수익률이 마이너스일 때 멘트]
-const GRADE_COMMENT = {
-  SSS: ["존버 수익률을 50%p 넘게 압도했습니다. 전설적인 한 판입니다. 🏆",
-        "폭락장을 완벽하게 피했습니다. 시장에서 순간이동하셨나요? 🛸"],
-  SS: ["존버를 크게 앞질렀습니다. 차트가 당신에게 말을 거는 수준입니다. 🔥",
-       "폭락장에서 놀라운 방어력을 보여줬습니다. 생존을 넘어 압승입니다. 🛡️"],
-  S: ["당신... 혹시 여의도에서 오셨나요? 시장을 압살했습니다. 👑",
-      "폭락장에서 이 정도 방어라니. 도망치는 것도 실력입니다. 🏃"],
-  A: ["단타 적성 확실합니다. 실전엔 수수료가 있다는 것만 기억하세요. 😎",
-      "시장은 무너졌지만 당신은 덜 무너졌습니다. 생존왕. 🪖"],
-  B: ["존버보다 잘했습니다. 소질이 보여요. 🙂",
-      "손실은 났지만 존버보단 나았어요. 위기 감지 능력 있음. 🦊"],
-  C: ["그냥 사두고 잠이나 잘 걸 그랬습니다. 성적은 존버와 비슷해요. 😴",
-      "이러나 저러나 비슷하게 잃었습니다. 마음만 고생했네요. 😮‍💨"],
-  D: ["손가락이 수익률을 갉아먹었습니다. 매매 버튼과 거리두기를 권합니다. 🫠",
-      "떨어지는 칼날을 자꾸 잡으셨군요. 손은 주머니에. 🔪"],
-  F: ["축하합니다. 당신은 시장의 유동성 공급자였습니다. 단타 금지. 🚫",
-      "고점 매수 저점 매도의 정석. 교과서에 반면교사로 실립니다. 📚"],
-  "?": ["매매를 안 하면 적성을 알 수 없습니다. 다음 판엔 버튼을 눌러보세요. 👀",
-        "매매를 안 하면 적성을 알 수 없습니다. 다음 판엔 버튼을 눌러보세요. 👀"],
-};
 function gradeComment(r) {
-  // 수익은 냈지만 존버보다 못한 경우: 익절 응원 + 점수가 낮은 이유 설명
   if (r.myRet > 0 && (r.grade === "D" || r.grade === "F")) {
-    return `💰 ${pct(r.myRet)} 익절 성공 — 익절은 언제나 옳습니다! 다만 그냥 들고만 있었어도 ${pct(r.bhRet)}였기에 단타 점수는 아쉬워요.`;
+    return t("gradePosProfit")(pct(r.myRet), pct(r.bhRet));
   }
   if (r.myRet > 0 && r.grade === "C") {
-    return `💰 익절은 옳다! 수익도 냈고 존버(${pct(r.bhRet)})와 비슷한 성적. 나쁘지 않아요. 🙂`;
+    return t("gradeProfitC")(pct(r.bhRet));
   }
-  return GRADE_COMMENT[r.grade][r.myRet < 0 ? 1 : 0];
+  return t("gradeComment")[r.grade][r.myRet < 0 ? 1 : 0];
 }
 
 function behaviorTag() {
   const r = G.result;
-  if (r.nTrades === 0) return "👀 단 한 번도 매매하지 않은 관전형";
-  if (r.nTrades >= 40) return `🔥 뇌동매매 경보 — 1년간 ${r.nTrades}회 매매`;
-  if (G.holdDays >= N * 0.9 && r.nTrades <= 3) return "💎 사실상 존버였습니다";
-  if (r.winRate != null && r.winRate >= 0.6) return `🎯 매도 승률 ${(r.winRate * 100).toFixed(0)}% — 타이밍 감각 있음`;
-  return `✂️ 총 ${r.nTrades}회 매매`;
+  if (r.nTrades === 0) return t("behaviorNoEntry");
+  if (r.nTrades >= 40) return t("behaviorOvertrading")(r.nTrades);
+  if (G.holdDays >= N * 0.9 && r.nTrades <= 3) return t("behaviorHodler");
+  if (r.winRate != null && r.winRate >= 0.6) return t("behaviorWinRate")((r.winRate * 100).toFixed(0));
+  return t("behaviorSummary")(r.nTrades);
 }
 
 function renderResult() {
@@ -614,33 +811,33 @@ function renderResult() {
   show("scr-result");
   $("#challenge-msg").classList.add("hidden");
   $("#challenge-copy").classList.add("hidden");
-  $("#btn-challenge").innerHTML = "⚔️ 친구에게 도전장 보내기";
+  $("#btn-challenge").innerHTML = t("btnChallenge");
 
   $("#r-name").textContent = `${SECTOR_EMOJI[s.sector] || "📈"} ${s.name} (${s.t})`;
-  $("#r-period").textContent = `${fmtDate(s.d[G.start])} ~ ${fmtDate(s.d[bar(N - 1)])} 구간이었습니다`;
+  $("#r-period").textContent = t("rPeriod")(fmtDate(s.d[G.start]), fmtDate(s.d[bar(N - 1)]));
   $("#r-grade").textContent = r.grade;
   $("#r-comment").innerHTML = gradeComment(r) + '<br><span class="r-behavior">' + behaviorTag() + "</span>";
 
   const row = (label, ret, me) =>
     `<div class="row${me ? " me" : ""}"><span>${label}</span><b class="${ret >= 0 ? "plus" : "minus"}">${pct(ret)}</b></div>`;
   $("#r-vs").innerHTML =
-    row(`🫵 나의 단타 (최종 ${fmtWon(r.equity)})`, r.myRet, true) +
-    row(`💎 그냥 존버했다면 (바이앤홀드)`, r.bhRet);
+    row(t("vsMyTrading")(fmtWon(r.equity)), r.myRet, true) +
+    row(t("vsSpot"), r.bhRet);
 
   $("#r-stats").innerHTML = `
-    <div class="stat"><span>매매 횟수</span><b>${r.nTrades}회</b></div>
-    <div class="stat"><span>매도 승률</span><b>${r.winRate == null ? "-" : (r.winRate * 100).toFixed(0) + "%"}</b></div>
-    <div class="stat"><span>최대 낙폭</span><b>-${(r.mdd * 100).toFixed(1)}%</b></div>`;
+    <div class="stat"><span>${t("statTrades")}</span><b>${t("statTradesVal")(r.nTrades)}</b></div>
+    <div class="stat"><span>${t("statWinRate")}</span><b>${r.winRate == null ? "-" : (r.winRate * 100).toFixed(0) + "%"}</b></div>
+    <div class="stat"><span>${t("statMdd")}</span><b>-${(r.mdd * 100).toFixed(1)}%</b></div>`;
 
   const cEl = $("#r-challenge");
   if (G.challenge && G.challenge.r != null) {
     const mine = r.equity, theirs = G.challenge.r;
     cEl.classList.remove("hidden");
     cEl.innerHTML = mine > theirs
-      ? `🏆 <b>승리!</b> 나 ${fmtWon(mine)} vs 상대 ${fmtWon(theirs)}`
+      ? t("challengeWin")(fmtWon(mine), fmtWon(theirs))
       : mine < theirs
-      ? `😭 <b>패배...</b> 나 ${fmtWon(mine)} vs 상대 ${fmtWon(theirs)}`
-      : `🤝 무승부! 둘 다 ${fmtWon(mine)}`;
+      ? t("challengeLose")(fmtWon(mine), fmtWon(theirs))
+      : t("challengeTie")(fmtWon(mine));
   } else cEl.classList.add("hidden");
 
   drawResultChart();
@@ -677,8 +874,8 @@ function paintResultCurves(ctx, ox, oy, w, h, big = false) {
   }
 
   ctx.textAlign = "left"; ctx.font = `${big ? 20 : 12}px sans-serif`;
-  ctx.fillStyle = "#8b93b8"; ctx.fillText("— 주가", ox + pad + 4, oy + (big ? 30 : 18));
-  ctx.fillStyle = "#ffd84d"; ctx.fillText("— 내 자산", ox + pad + (big ? 110 : 60), oy + (big ? 30 : 18));
+  ctx.fillStyle = "#8b93b8"; ctx.fillText(t("chartPriceLine"), ox + pad + 4, oy + (big ? 30 : 18));
+  ctx.fillStyle = "#ffd84d"; ctx.fillText(t("chartAssetLine"), ox + pad + (big ? 110 : 60), oy + (big ? 30 : 18));
 }
 
 function drawResultChart() {
@@ -710,15 +907,15 @@ function renderDash() {
   const order = ["SSS", "SS", "S", "A", "B", "C", "D", "F"];
   const best = order.find((g) => h.some((x) => x.grade === g)) || "-";
   dash.innerHTML = `
-    <h3>📊 내 단타 기록</h3>
+    <h3>${t("dashTitle")}</h3>
     <div class="sum">
-      <span>판수 <b>${h.length}</b></span>
-      <span>존버 이긴 비율 <b>${((beats / h.length) * 100).toFixed(0)}%</b></span>
-      <span>평균 알파 <b>${pct(avgAlpha)}</b></span>
-      <span>최고 등급 <b>${best}</b></span>
+      <span>${t("dashGames")} <b>${h.length}</b></span>
+      <span>${t("dashBeats")} <b>${((beats / h.length) * 100).toFixed(0)}%</b></span>
+      <span>${t("dashAlpha")} <b>${pct(avgAlpha)}</b></span>
+      <span>${t("dashBest")} <b>${best}</b></span>
     </div>
     ${h.slice(0, 5).map((x) =>
-      `<div class="hist"><span>${x.grade}등급 · ${x.name}</span><span>나 ${pct(x.ret)} / 존버 ${pct(x.bh)}</span></div>`
+      `<div class="hist"><span>${t("dashGradeEntry")(x.grade)} · ${x.name}</span><span>${t("dashRowSuffix")(pct(x.ret), pct(x.bh))}</span></div>`
     ).join("")}`;
 }
 
@@ -729,10 +926,10 @@ function challengeUrl() {
 
 async function shareChallenge() {
   const r = G.result;
-  const text = `📉 차트만 보고 매매하는 - 단타 적성검사 ${r.grade}등급! 1년 단타로 ${pct(r.myRet)} (존버는 ${pct(r.bhRet)}). 같은 차트로 나를 이겨봐 ⚔️`;
+  const text = t("shareText")(r.grade, pct(r.myRet), pct(r.bhRet));
   const url = challengeUrl();
   const btn = $("#btn-challenge");
-  const COPIED = '✅ 복사됐어요! 카톡창에 붙여넣어 보내세요.<small>다시 누르면 재복사</small>';
+  const COPIED = t("challengeCopied");
   // 클릭 즉시 도전장(메시지+링크) 복사 → 버튼 문구로 안내. 다시 눌러도 재복사됨
   try {
     await navigator.clipboard.writeText(text + "\n" + url);
@@ -751,7 +948,7 @@ async function shareChallenge() {
     btn.innerHTML = COPIED;
     gaEvent("challenge_copy", { grade: r.grade });
   } catch {
-    challengeMsg("아래 링크를 복사해서 친구에게 보내세요 👇");
+    challengeMsg(t("challengeManual"));
   }
 }
 
@@ -788,7 +985,7 @@ async function saveCard() {
 
   ctx.textAlign = "center";
   ctx.fillStyle = "#ffd84d"; ctx.font = "700 36px Pretendard, sans-serif";
-  ctx.fillText("📉 차트만 보고 매매하는 - 단타 적성검사", W / 2, 90);
+  ctx.fillText(t("cardTitle"), W / 2, 90);
 
   // 등급 배지
   ctx.strokeStyle = "#ffd84d"; ctx.lineWidth = 6;
@@ -799,16 +996,16 @@ async function saveCard() {
 
   // 종목 공개
   ctx.fillStyle = "#eef1ff"; ctx.font = "700 46px Pretendard, sans-serif";
-  ctx.fillText(`${s.name} (${s.t}) 1년 단타`, W / 2, 452);
+  ctx.fillText(`${s.name} (${s.t}) ${t("cardPeriodLabel")}`, W / 2, 452);
   ctx.fillStyle = "#8b93b8"; ctx.font = "400 32px Pretendard, sans-serif";
   ctx.fillText(`${fmtDate(s.d[G.start])} ~ ${fmtDate(s.d[bar(N - 1)])}`, W / 2, 506);
 
   // 수익률 비교
   ctx.font = "700 50px Pretendard, sans-serif";
   ctx.fillStyle = r.myRet >= 0 ? "#ff4d4d" : "#4d7fff";
-  ctx.fillText(`나의 단타 ${pct(r.myRet)}  (${fmtWon(r.equity)})`, W / 2, 592);
+  ctx.fillText(t("cardMyLine")(pct(r.myRet), fmtWon(r.equity)), W / 2, 592);
   ctx.fillStyle = "#8b93b8"; ctx.font = "400 38px Pretendard, sans-serif";
-  ctx.fillText(`존버했다면 ${pct(r.bhRet)}`, W / 2, 646);
+  ctx.fillText(t("cardSpotLine")(pct(r.bhRet)), W / 2, 646);
 
   // 코멘트
   ctx.fillStyle = "#ffd84d"; ctx.font = "400 32px Pretendard, sans-serif";
@@ -823,18 +1020,18 @@ async function saveCard() {
   // 통계
   ctx.textAlign = "center"; ctx.fillStyle = "#8b93b8"; ctx.font = "400 30px Pretendard, sans-serif";
   const winTxt = r.winRate == null ? "-" : (r.winRate * 100).toFixed(0) + "%";
-  ctx.fillText(`매매 ${r.nTrades}회      매도 승률 ${winTxt}      최대 낙폭 -${(r.mdd * 100).toFixed(1)}%`, W / 2, 1300);
+  ctx.fillText(t("cardStats")(r.nTrades, winTxt, (r.mdd * 100).toFixed(1)), W / 2, 1300);
 
   // 도전 결과(있으면)
   if (G.challenge && G.challenge.r != null) {
     const win = r.equity > G.challenge.r;
     ctx.fillStyle = win ? "#ff4d4d" : "#4d7fff";
     ctx.font = "700 34px Pretendard, sans-serif";
-    ctx.fillText(win ? `🏆 도전 승리! 상대 ${fmtWon(G.challenge.r)}` : `상대 ${fmtWon(G.challenge.r)}와 대결`, W / 2, 1360);
+    ctx.fillText(win ? t("cardChallengeWin")(fmtWon(G.challenge.r)) : t("cardChallengeWith")(fmtWon(G.challenge.r)), W / 2, 1360);
   }
 
   ctx.fillStyle = "#4a5278"; ctx.font = "400 26px Pretendard, sans-serif";
-  ctx.fillText("너도 해봐 → 차트만 보고 매매하는 - 단타 적성검사", W / 2, 1430);
+  ctx.fillText(t("cardFootnote"), W / 2, 1430);
 
   const blob = await new Promise((res) => cv.toBlob(res, "image/png"));
   openCardModal(blob);
@@ -864,22 +1061,22 @@ function downloadCard() {
   if (!CARD_BLOB) return;
   const a = document.createElement("a");
   a.href = CARD_URL;
-  a.download = "단타적성검사.png";
+  a.download = t("cardFilename");
   a.click();
   gaEvent("card_save", { grade: G.result?.grade || "unknown" });
-  cardModalMsg("이미지를 저장했어요! 💾");
+  cardModalMsg(t("cardSaved"));
 }
 
 async function shareNative() {
   const r = G.result;
   if (!r) return;
   const url = location.origin + location.pathname;
-  const text = `📊 단타 적성검사 ${r.grade}등급! 1년 단타로 ${pct(r.myRet)} (존버 ${pct(r.bhRet)}). 너도 한번 해봐 ⚔️`;
+  const text = t("shareText")(r.grade, pct(r.myRet), pct(r.bhRet));
   try {
     if (navigator.share) {
       const shareData = { text, url };
       if (CARD_BLOB && navigator.canShare) {
-        const file = new File([CARD_BLOB], "단타적성검사.png", { type: "image/png" });
+        const file = new File([CARD_BLOB], t("cardFilename"), { type: "image/png" });
         if (navigator.canShare({ files: [file] })) shareData.files = [file];
       }
       await navigator.share(shareData);
@@ -891,9 +1088,9 @@ async function shareNative() {
   }
   try {
     await navigator.clipboard.writeText(text + "\n" + url);
-    cardModalMsg("텍스트와 링크를 복사했어요! 어디든 붙여넣기 해서 공유하세요 📋");
+    cardModalMsg(t("shareNativeFallback"));
   } catch {
-    cardModalMsg("공유 기능이 지원되지 않아요. '복사' 버튼을 이용해 주세요 🙏");
+    cardModalMsg(t("shareNativeFail"));
   }
   gaEvent("card_share", { platform: "clipboard_fallback", grade: r.grade });
 }
@@ -904,9 +1101,9 @@ async function copyCard() {
     if (!navigator.clipboard || !window.ClipboardItem) throw new Error("unsupported");
     await navigator.clipboard.write([new ClipboardItem({ "image/png": CARD_BLOB })]);
     gaEvent("card_copy", { grade: G.result?.grade || "unknown" });
-    cardModalMsg("카드 이미지가 복사됐어요! 붙여넣기 하세요 📋");
+    cardModalMsg(t("cardCopied"));
   } catch {
-    cardModalMsg("이 브라우저는 이미지 복사가 안 돼요. '이미지 저장'을 이용해 주세요 🙏");
+    cardModalMsg(t("cardCopyFail"));
   }
 }
 
