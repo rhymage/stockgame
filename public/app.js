@@ -102,6 +102,7 @@ const STRINGS = {
     dashGames:"판수", dashBeats:"존버 이긴 비율", dashAlpha:"평균 알파", dashBest:"최고 등급",
     dashGradeEntry:(g)=>`${g}등급`,
     dashRowSuffix:(me,hold)=>`나 ${me} / 존버 ${hold}`,
+    dashEmpty:"아직 저장된 기록이 없어요. 한 판을 끝내면 최근 결과가 여기에 쌓입니다.",
     cardFilename:"단타적성검사.png",
     cardTitle:"📉 차트만 보고 매매하는 - 단타 적성검사",
     cardPeriodLabel:"1년 단타",
@@ -193,6 +194,7 @@ const STRINGS = {
     dashGames:"Games", dashBeats:"Beat buy-and-hold", dashAlpha:"Avg alpha", dashBest:"Best grade",
     dashGradeEntry:(g)=>`Grade ${g}`,
     dashRowSuffix:(me,hold)=>`Me ${me} / Hold ${hold}`,
+    dashEmpty:"No saved trades yet. Finish one run and recent results will appear here.",
     cardFilename:"day-trading-test.png",
     cardTitle:"📉 Trade on Charts — Stock Day-Trading Test",
     cardPeriodLabel:"1-Year Trading",
@@ -955,9 +957,14 @@ function saveHistory() {
 function renderDash() {
   let h = [];
   try { h = JSON.parse(localStorage.getItem("dt_history") || "[]"); } catch {}
-  if (!h.length) return;
   const dash = $("#dash");
   dash.classList.remove("hidden");
+  if (!h.length) {
+    dash.innerHTML = `
+      <h3>${t("dashTitle")}</h3>
+      <p class="dash-empty">${t("dashEmpty")}</p>`;
+    return;
+  }
   const beats = h.filter((x) => x.ret > x.bh).length;
   const avgAlpha = h.reduce((a, x) => a + (x.ret - x.bh), 0) / h.length;
   const order = ["SSS", "SS", "S", "A", "B", "C", "D", "F"];
