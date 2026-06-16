@@ -49,8 +49,6 @@ h1 { font-size: 30px; letter-spacing: -0.5px; line-height: 1.18; }
 .dash .sum { display: flex; gap: 14px; font-size: 13px; color: var(--sub); margin-bottom: 8px; flex-wrap: wrap; }
 .dash .sum b { color: var(--text); }
 .dash .hist { font-size: 12px; color: var(--sub); padding: 3px 0; border-top: 1px solid #232a52; display: flex; justify-content: space-between; }
-.dash-empty { font-size: 13px; color: var(--sub); }
-
 /* ── 게임 화면 ── */
 .hud { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .sector-chip {
